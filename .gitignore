@@ -1,0 +1,11 @@
+# backup or temporary files
+*~
+*.bak
+*.swp
+# project files
+.vscode
+# OSX specific files
+.DS_Store
+# NextFlow work files
+work
+.nextflow*
