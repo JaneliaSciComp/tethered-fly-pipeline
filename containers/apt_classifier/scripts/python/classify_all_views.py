@@ -87,7 +87,8 @@ def classify_movie(mov_file, pred_fn, conf, crop_loc, model_type):
 
 def get_crop_locs(lblfile, view, crop_reg_file, crop_size, height, width):
     # everything is in matlab indexing
-    print('Crop locs from', lblfile)
+    print('Crop locs', view, '->',
+          crop_size[view], 'from', lblfile, 'and', crop_reg_file)
     if tarfile.is_tarfile(lblfile):
         print('Open as tar', lblfile)
         with tarfile.open(lblfile) as tar:
@@ -143,6 +144,14 @@ def getexpname(dirname):
     dir_parts = dirname.split(os.sep)
     expname = dir_parts[-6] + "!" + dir_parts[-3] + "!" + dir_parts[-1][-10:-4]
     return expname
+
+
+def get_frame_dims(movie_file):
+    cap = cv2.VideoCapture(movie_file)
+    height = int(cap.get(cvc.FRAME_HEIGHT))
+    width = int(cap.get(cvc.FRAME_WIDTH))
+    cap.release()
+    return height, width
 
 
 def get_movies_and_body_labels(smovies_filename, fmovies_filename, label_filename):
@@ -214,8 +223,8 @@ def main(argv):
     parser.add_argument("-crop_reg_file", dest="crop_reg_file",
                         help="Regression file",
                         required=True)
-    parser.add_argument('-crop_size',
-                        dest='crop_size',
+    parser.add_argument('-view_crop_sizes',
+                        dest='view_crop_sizes',
                         metavar='(dx0,dy0),(dx1,dy1)',
                         type=size_list_arg,
                         default='[230,350],[350,350]',
@@ -270,15 +279,12 @@ def main(argv):
             oname = re.sub('!', '__', getexpname(valmovies[ndx]))
             pname = os.path.join(args.outdir, oname + extrastr)
 
-            print(oname)
+            print('pname=', pname, 'oname=', oname)
 
             # detect
             if (args.redo or not os.path.isfile(pname + '.mat')):
-
-                cap = cv2.VideoCapture(valmovies[ndx])
-                height = int(cap.get(cvc.FRAME_HEIGHT))
-                width = int(cap.get(cvc.FRAME_WIDTH))
-                cap.release()
+                # only classify the movie if '-r' or the output file is not there
+                height, width = get_frame_dims(valmovies[ndx])
                 try:
                     dirname = os.path.normpath(valmovies[ndx])
                     dir_parts = dirname.split(os.sep)
@@ -290,11 +296,12 @@ def main(argv):
                     continue
                 crop_loc_all = get_crop_locs(bodydict[flynum], view,
                                              args.crop_reg_file,
-                                             args.crop_size,
+                                             args.view_crop_sizes,
                                              height, width)  # return x first
                 try:
                     predLocs, predScores, pred_ulocs, pred_conf = classify_movie(
-                        valmovies[ndx], pred_fn, conf, crop_loc_all, args.model_type)
+                        valmovies[ndx], pred_fn, conf,
+                        crop_loc_all, args.model_type)
                 except KeyError:
                     continue
 
@@ -306,7 +313,9 @@ def main(argv):
                                                      'ulocs': pred_ulocs,
                                                      'pred_conf': pred_conf
                                                      },
-                                    appendmat=False, truncate_existing=True, gzip_compression_level=0)
+                                    appendmat=False,
+                                    truncate_existing=True,
+                                    gzip_compression_level=0)
                 del predScores, predLocs
 
                 print('Detecting:%s' % oname)

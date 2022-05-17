@@ -25,34 +25,11 @@ RUN wget ${DOWNLOAD_CONDA_URL} -O miniconda-install.sh && \
     bash miniconda-install.sh -b -p /miniconda && \
     rm miniconda-install.sh
 
-# Install OpenCV
-# WORKDIR /code
-# ENV OPENCV_VERSION="2.4.13.6"
-# RUN wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -O opencv.zip \
-#     && unzip -q opencv.zip \
-#     && cd opencv-${OPENCV_VERSION} \
-#     && mkdir build \
-#     && cd build \
-#     # prepare the build
-#     && cmake \
-#         -D CMAKE_BUILD_TYPE=RELEASE \
-#         -D BUILD_PYTHON_SUPPORT=ON \
-#         -D CMAKE_INSTALL_PREFIX=/usr/local \
-#         -D BUILD_EXAMPLES=OFF \
-#         -D WITH_IPP=OFF \
-#         -D WITH_FFMPEG=ON \
-#         -D WITH_V4L=ON \
-#         -D WITH_CUDA=OFF .. \
-#     # install
-#     && make -j$(nproc) && make install && ldconfig
-
 ENV PATH=/miniconda/bin:${PATH}
 
 # Checkout and build the code
 WORKDIR /code/apt
 RUN git clone --branch stephen_working --depth 1 https://github.com/kristinbranson/APT.git .
-
-COPY scripts/python/classifier.py deepnet
 
 RUN conda config --set always_yes yes --set changeps1 no && \
     conda update -q conda
@@ -78,4 +55,4 @@ RUN apt-get install -y vim
 
 # !!!!!
 
-
+COPY scripts/python/*.py deepnet
