@@ -52,15 +52,35 @@ class _View(Enum):
     def _coord_param(self, coord_name):
         return 'reg_view{}_{}'.format(self.value+1, coord_name)
 
-def _size_arg(arg):
-    if arg:
-        arg_parts = arg.split(',')
-        int_parts = [int(i) for i in arg_parts[0:2]]
-        if len(int_parts) < 2:
-            raise ValueError("Size expected to have 2 components: sx,sy")
-        return int_parts
-    else:
-        return None
+
+class FlyData:
+    def __init__(self, flynum):
+        self._flynum = flynum
+        self._movies_list = []
+        self._label_filename = None
+        self._crop_locs = None
+
+    def _add_movie(self, movie_filename):
+        self._movies_list.append(movie_filename)
+
+    def _set_label_file(self, label_filename):
+        self._label_filename = label_filename
+
+    def _set_crop_locs(self, crop_locs):
+        self._crop_locs = crop_locs
+
+
+def _adjust_crop_region(crop_region, crop_size, height, width):
+    (x_left, x_right, y_top, y_bottom) = crop_region
+    if x_right > width:
+        x_left = width - crop_size[0] + 1
+        x_right = width
+    x_left = 1 if x_left < 1 else x_left
+    if y_bottom > height:
+        y_bottom = height
+        y_top = height - crop_size[1] + 1
+    y_top = 1 if y_top < 1 else y_top
+    return [x_left, x_right, y_top, y_bottom]
 
 
 def _classify_movie(mov_file, pred_fn, conf, crop_loc, model_type):
@@ -134,11 +154,11 @@ def _extract_flynum_from_filename(fn):
     except AttributeError:
         print('Could not find the fly number from movie name')
         print('{} isnt in standard format'.format(smovies[ndx]))
-        return 0;
+        return 0
     return flynum
 
 
-def _get_crop_locs(lblfile, view, crop_reg_file, crop_size, height, width):
+def _get_crop_locs(lblfile, view, crop_reg_file, crop_size):
     # everything is in matlab indexing
     print('Crop locs', view, '->',
           crop_size, 'from', lblfile, 'and', crop_reg_file)
@@ -180,16 +200,10 @@ def _get_crop_locs(lblfile, view, crop_reg_file, crop_size, height, width):
     x_left = int(round(x_reg[0] + x_reg[1] * neck_locs[0]))
     x_left = 1 if x_left < 1 else x_left
     x_right = x_left + crop_size[0] - 1
-    if x_right > width:
-        x_left = width - crop_size[0] + 1
-        x_right = width
     y_top = int(round(y_reg[0] + y_reg[1] * neck_locs[1]))-20
     y_top = 1 if y_top < 1 else y_top
     y_bottom = y_top + crop_size[1] - 1
-    if y_bottom > height:
-        y_bottom = height
-        y_top = height - crop_size[1] + 1
-    return [x_left, x_right, y_top, y_bottom]
+    return tuple([x_left, x_right, y_top, y_bottom])
 
 
 def _getexpname(dirname):
@@ -208,26 +222,34 @@ def _get_frame_dims(movie_file):
 
 
 def _get_movies_and_labels(movies_filename, label_filename):
-
     with open(movies_filename, "r") as text_file:
         text_file_lines = text_file.readlines()
     movies_list = [x.rstrip() for x in text_file_lines]
 
+    flydata = {}
     for ff in movies_list:
         if not os.path.isfile(ff):
             print("Movie %s not found" % (ff))
             raise exit(0)
+        ff_flynum = _extract_flynum_from_filename(ff)
+        current_flydata = flydata.get(ff_flynum)
+        if current_flydata is None:
+            current_flydata = FlyData(ff_flynum)
+            flydata[ff_flynum] = current_flydata
+        current_flydata._add_movie(ff)
 
-    bodydict = {}
     with open(label_filename, 'r') as f:
         for l in f:
             lparts = l.split(',')
             if len(lparts) != 2:
                 print("Error splitting body label file line %s into two parts" % l)
                 raise exit(0)
-            bodydict[int(lparts[0])] = lparts[1].strip()
+            current_flynum = int(lparts[0])
+            current_flydata = flydata.get(current_flynum)
+            if current_flydata is not None:
+                current_flydata._set_label_file(lparts[1].strip())
 
-    return movies_list, bodydict
+    return flydata
 
 
 def _load_model(lbl_file, view, model_type, model_dir, model_name):
@@ -238,7 +260,7 @@ def _load_model(lbl_file, view, model_type, model_dir, model_name):
                            name=model_name,
                            cache_dir=model_dir,
                            net_type=model_type)
-    update_conf(conf)
+    _update_conf(conf)
     for try_num in range(4):
         try:
             tf.reset_default_graph()
@@ -253,8 +275,8 @@ def _load_model(lbl_file, view, model_type, model_dir, model_name):
     return conf, model_file, pred_fn
 
 
-def _process_movie(movie_filename, view, bodydict, crop_reg_file, crop_size,
-                   model_type, conf, model_file, pred_fn,
+def _process_movie(movie_filename, view, flydata, crop_size,
+                   conf, model_type, model_file, pred_fn,
                    outdir,
                    force=True):
     mname, _ = os.path.splitext(os.path.basename(movie_filename))
@@ -266,16 +288,13 @@ def _process_movie(movie_filename, view, bodydict, crop_reg_file, crop_size,
         # result already exist and we do not force re-process
         print("Result file", resname, "already exist")
         return resname
-    
+
     print('Detecting:%s' % oname)
     height, width = _get_frame_dims(movie_filename)
-    flynum = _extract_flynum_from_filename(movie_filename)
 
-    crop_loc_all = _get_crop_locs(bodydict[flynum],
-                                  view,
-                                  crop_reg_file,
-                                  crop_size,
-                                  height, width)
+    crop_loc_all = _adjust_crop_region(flydata._crop_locs,
+                                       crop_size,
+                                       height, width)
     try:
         predLocs, predScores, pred_ulocs, pred_conf = _classify_movie(
             movie_filename, pred_fn, conf,
@@ -290,7 +309,7 @@ def _process_movie(movie_filename, view, bodydict, crop_reg_file, crop_size,
                                   'model_file': model_file,
                                   'ulocs': pred_ulocs,
                                   'pred_conf': pred_conf
-                                 },
+                                  },
                         appendmat=False,
                         truncate_existing=True,
                         gzip_compression_level=0)
@@ -298,8 +317,18 @@ def _process_movie(movie_filename, view, bodydict, crop_reg_file, crop_size,
     return resname
 
 
+def _size_arg(arg):
+    if arg:
+        arg_parts = arg.split(',')
+        int_parts = [int(i) for i in arg_parts[0:2]]
+        if len(int_parts) < 2:
+            raise ValueError("Size expected to have 2 components: sx,sy")
+        return int_parts
+    else:
+        return None
 
-def update_conf(conf):
+
+def _update_conf(conf):
     conf.normalize_img_mean = False
     conf.adjust_contrast = True
     conf.dl_steps = 60000
@@ -352,19 +381,26 @@ def main(argv):
                       if args.view_crop_size is not None
                       else args.view._default_crop_size())
 
-    movies_list, bodydict = _get_movies_and_labels(args.viewfile,
-                                                   args.body_lbl_assoc_file)
+    flydata = _get_movies_and_labels(args.viewfile,
+                                     args.body_lbl_assoc_file)
 
     conf, model_file, pred_fn = _load_model(args.lbl_file, args.view.value,
                                             args.model_type, args.model_cache_dir, args.model_name)
 
-
-    for movie_fn in movies_list:
-        _process_movie(movie_fn, args.view, bodydict,
-                       args.crop_reg_file, view_crop_size,
-                       args.model_type, conf, model_file,
-                       pred_fn, outdir,
-                       force=args.redo)
+    for flynum in flydata:
+        current_flydata = flydata[flynum]
+        crop_locs = _get_crop_locs(current_flydata._label_filename,
+                                   args.view,
+                                   args.crop_reg_file,
+                                   view_crop_size)
+        current_flydata._set_crop_locs(crop_locs)
+        for movie_fn in current_flydata._movies_list:
+            print('Process', movie_fn)
+            _process_movie(movie_fn, args.view, current_flydata,
+                           view_crop_size, conf,
+                           args.model_type, model_file, pred_fn,
+                           outdir,
+                           force=args.redo)
 
 
 if __name__ == "__main__":
