@@ -141,7 +141,10 @@ def _classify_movie(mov_file, pred_fn, conf, crop_loc, model_type):
         if cur_b % 400 == 399:
             sys.stdout.write('\n')
 
-    cap.close()
+    if cap.is_open():
+        cap.file_lock.release()
+        cap.close()
+
     return pred_locs, preds, pred_ulocs, uconf
 
 
