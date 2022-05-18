@@ -27,5 +27,6 @@ ${LD_LIBRARY_PATH}
 
 COPY bin /app/bin
 COPY scripts/entrypoint.sh /app
+RUN chmod +x /app/*.sh
 
 CMD [ "/app/entrypoint.sh" ]

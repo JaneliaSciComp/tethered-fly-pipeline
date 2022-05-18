@@ -7,6 +7,10 @@ include {
     detect_pipeline as front_view_detect
 } from '../subworkflows/detect_pipeline'
 
+include {
+    trace_pipeline;
+} from '../subworkflows/trace_pipeline'
+
 workflow apt_pipeline {
     take:
     input_dir
@@ -25,14 +29,15 @@ workflow apt_pipeline {
     | combine(apt_inputs.map { it[0] })
     | map { 
         [it[1], "${it[0]}/${it[1]}"] 
-    } // [ flyname, fly_output_dir]
+    } // [ flyname, fly_temp_tracking_dir]
 
     def side_view_detect_results = side_view_detect(
         apt_inputs,
         tmp_apt_outputs,
         params.sideview_type,
         params.sideview_dirname_pattern,
-        params.sideview_crop_size
+        params.sideview_crop_size,
+        params.sideview_detect_result_suffix
     )
 
     def front_view_detect_results = front_view_detect(
@@ -40,12 +45,37 @@ workflow apt_pipeline {
         tmp_apt_outputs,
         params.frontview_type,
         params.frontview_dirname_pattern,
-        params.frontview_crop_size
+        params.frontview_crop_size,
+        params.frontview_detect_result_suffix
     )
 
-    def pair_detect_results = side_view_detect_results
+    def paired_detect_results = side_view_detect_results
     | join(front_view_detect_results, by:[0,1])
+    | map {
+        def (flyname, movie_key,
+             side_movie, side_detect_result_dir, side_detect_result_name,
+             front_movie, front_detect_result_dir, front_detect_result_name
+            ) = it
+        [
+            flyname,
+            side_movie,
+            "${side_detect_result_dir}/${side_detect_result_name}",
+            front_movie,
+            "${front_detect_result_dir}/${front_detect_result_name}"
+        ]
+    }
+
+    def apt_outputs = output_dir
+    | combine(apt_inputs.map { it[0] })
+    | map {
+        [it[1], "${it[0]}/${it[1]}"]
+    } // [ flyname, fly_output_dir]
+
+    def apt_final_results = trace_pipeline(
+        paired_detect_results,
+        apt_outputs
+    )
 
     emit:
-    res = pair_detect_results
+    done = apt_final_results
 }

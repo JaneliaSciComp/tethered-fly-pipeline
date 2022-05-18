@@ -16,12 +16,12 @@ process DETECT_FEATURES_FROM_MOVIE {
     memory { params.apt_detect_memory }
 
     input:
-    tuple val(flyname), val(movie_filename), val(output_dirname)
+    tuple val(flyname), val(movie_filename), val(output_dirname), val(expected_output_name)
     val(view_type)
     val(view_crop_size)
 
     output:
-    tuple val(flyname), val(movie_filename), val(output_dirname)
+    tuple val(flyname), val(movie_filename), val(output_dirname), val(expected_output_name)
 
     script:
     def force_detect = params.force_detect ? '-r' : ''
