@@ -223,11 +223,13 @@ def _get_frame_dims(movie_file):
     return height, width
 
 
-def _get_movies_and_labels(movies_filename, label_filename):
+def _get_movies_list(movies_filename):
     with open(movies_filename, "r") as text_file:
         text_file_lines = text_file.readlines()
-    movies_list = [x.rstrip() for x in text_file_lines]
+    return [x.rstrip() for x in text_file_lines]
 
+
+def _get_flydata(movies_list, label_filename):
     flydata = {}
     for ff in movies_list:
         if not os.path.isfile(ff):
@@ -338,11 +340,14 @@ def _update_conf(conf):
 
 def main(argv):
     parser = argparse.ArgumentParser()
-    parser.add_argument("-viewfile", dest="viewfile",
-                        help="text file with list of videos for the view",
-                        required=True)
+    parser.add_argument("-movies", dest="movies",
+                        nargs="+",
+                        help="List of movies to classify.")
+    parser.add_argument("-movie_list_filename", dest="movies_file",
+                        help="File containing the list of movies to classify.")
     parser.add_argument("-view", dest="view",
                         type=_View._argtype, choices=list(_View),
+                        help="View type for all movies.",
                         required=True)
     parser.add_argument("-r", dest="redo",
                         help="if specified will recompute everything even if previous results exists",
@@ -350,10 +355,10 @@ def main(argv):
                         action="store_true")
     parser.add_argument("-bodylabelfilename",
                         dest="body_lbl_assoc_file",
-                        help="text file with list of body-label files, one per fly as 'flynum,/path/to/body_label.lbl'")
+                        help="text file with list of body-label lookup files, one per fly as 'flynum,/path/to/body_label.lbl'")
     parser.add_argument("-lbl_file",
                         dest="lbl_file",
-                        help="text file with list of body-label files, one per fly as 'flynum,/path/to/body_label.lbl'")
+                        help="Label file name")
     parser.add_argument("-model_type", dest="model_type",
                         help="Model type: {mdm|unet}",
                         default="mdn")
@@ -364,7 +369,7 @@ def main(argv):
                         dest="view_crop_size",
                         metavar="dx,dy",
                         type=_size_arg,
-                        help='Crop size')
+                        help='View crop size')
     parser.add_argument("-cache_dir",
                         dest="model_cache_dir")
     parser.add_argument("-n", dest="model_name",
@@ -383,8 +388,10 @@ def main(argv):
                       if args.view_crop_size is not None
                       else args.view._default_crop_size())
 
-    flydata = _get_movies_and_labels(args.viewfile,
-                                     args.body_lbl_assoc_file)
+    movies = args.movies + _get_movies_list(args.movies_file)
+
+    flydata = _get_flydata(movies,
+                           args.body_lbl_assoc_file)
 
     conf, model_file, pred_fn = _load_model(args.lbl_file, args.view.value,
                                             args.model_type, args.model_cache_dir, args.model_name)
