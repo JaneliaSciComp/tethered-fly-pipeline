@@ -211,7 +211,9 @@ def _get_crop_locs(lblfile, view, crop_reg_file, crop_size):
 def _getexpname(dirname):
     dirname = os.path.normpath(dirname)
     dir_parts = dirname.split(os.sep)
-    expname = dir_parts[-6] + "!" + dir_parts[-3] + "!" + dir_parts[-1][-10:-4]
+    expname = (dir_parts[-6] + "!" + dir_parts[-3] + "!" + dir_parts[-1][-10:-4]
+               if len(dir_parts) > 6
+               else dir_parts[-3] + "!" + dir_parts[-1][-10:-4])
     return expname
 
 
@@ -224,17 +226,20 @@ def _get_frame_dims(movie_file):
 
 
 def _get_movies_list(movies_filename):
-    with open(movies_filename, "r") as text_file:
-        text_file_lines = text_file.readlines()
-    return [x.rstrip() for x in text_file_lines]
+    if movies_filename is not None:
+        with open(movies_filename, "r") as text_file:
+            text_file_lines = text_file.readlines()
+        return [x.rstrip() for x in text_file_lines]
+    else:
+        return []
 
 
 def _get_flydata(movies_list, label_filename):
     flydata = {}
     for ff in movies_list:
         if not os.path.isfile(ff):
-            print("Movie %s not found" % (ff))
-            raise exit(0)
+            print("Movie %s not found" % (ff), file=sys.stderr)
+            raise exit(1)
         ff_flynum = _extract_flynum_from_filename(ff)
         current_flydata = flydata.get(ff_flynum)
         if current_flydata is None:
@@ -246,8 +251,8 @@ def _get_flydata(movies_list, label_filename):
         for l in f:
             lparts = l.split(',')
             if len(lparts) != 2:
-                print("Error splitting body label file line %s into two parts" % l)
-                raise exit(0)
+                print("Error splitting body label file line %s into two parts" % l, file=sys.stderr)
+                raise exit(1)
             current_flynum = int(lparts[0])
             current_flydata = flydata.get(current_flynum)
             if current_flydata is not None:

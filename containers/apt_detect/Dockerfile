@@ -2,8 +2,9 @@ FROM ubuntu:16.04
 
 LABEL org.opencontainers.image.licenses="BSD-3-Clause"
 
-RUN apt-get -y update && \
-    apt-get -y install \
+RUN apt-get -y update
+
+RUN apt-get -y install \
     git wget unzip \
     build-essential \
     cmake pkg-config \
@@ -14,6 +15,9 @@ RUN apt-get -y update && \
     libavcodec-dev libavformat-dev \
     libswscale-dev libjpeg-dev \
     libpng-dev libtiff-dev libjasper-dev libv4l-dev
+
+RUN apt-get -y install \
+    libcuda1-384
 
 ENV DOWNLOAD_CONDA_URL=https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 
@@ -27,16 +31,16 @@ RUN wget ${DOWNLOAD_CONDA_URL} -O miniconda-install.sh && \
 
 ENV PATH=/miniconda/bin:${PATH}
 
-# Checkout and build the code
-WORKDIR /code/apt
-RUN git clone --branch stephen_working --depth 1 https://github.com/kristinbranson/APT.git .
-
+# Install conda packages
 RUN conda config --set always_yes yes --set changeps1 no && \
-    conda update -q conda
+    conda update -q conda && \
+    conda install python=3.7
 
-RUN conda install python=3.7
-RUN conda install -c anaconda tensorflow=1.13.1
-RUN conda install -c anaconda keras=2.2.4
+RUN conda install -c anaconda \
+    tensorflow=1.13.1 \
+    tensorflow-gpu=1.13.1 \
+    keras=2.2.4
+
 RUN conda install -c conda-forge opencv=3.4.4
 
 RUN conda install -c conda-forge \
@@ -54,5 +58,9 @@ RUN pip install --upgrade pip && \
 RUN apt-get install -y vim
 
 # !!!!!
+
+# Checkout and build the code
+WORKDIR /code/apt
+RUN git clone --branch stephen_working --depth 1 https://github.com/kristinbranson/APT.git .
 
 COPY scripts/python/*.py deepnet

@@ -5,11 +5,12 @@ def default_params() {
         apt_track_container_version: '1.0',
 
         apt_detect_cpus: 8,
-        apt_detect_memory: '10G',
+        apt_detect_memory: '20G',
 
         apt_track_cpus: 8,
-        apt_track_memory: '10G',
+        apt_track_memory: '16G',
 
+        force_detect: false,
         flydata_dirname_pattern: 'fly[0-9]*',
         sideview_type: 'SIDE',
         sideview_crop_size: '230,350',
@@ -32,6 +33,11 @@ def input_dir_param(Map ps) {
 
 def output_dir_param(Map ps) {
     def dir = file(ps.o)
+    return "${dir}"
+}
+
+def temp_tracking_dir_param(Map ps) {
+    def dir = file(ps.tmp_tracking_dir)
     return "${dir}"
 }
 

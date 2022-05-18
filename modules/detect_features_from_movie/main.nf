@@ -2,11 +2,11 @@ include {
     create_container_options;
 } from '../../lib/container_utils'
 
-process DETECT_FEATURES_FOR_VIEW_MOVIES {
+process DETECT_FEATURES_FROM_MOVIE {
     label 'use_gpu'
     container { params.apt_detect_container }
     containerOptions { create_container_options([
-        file(viewlist_filename).parent,
+        file(movie_filename).parent,
         file(output_dirname).parent.parent,
         params.model_cache_dirname,
         file(params.body_axis_lookup_filename).parent,
@@ -16,18 +16,21 @@ process DETECT_FEATURES_FOR_VIEW_MOVIES {
     memory { params.apt_detect_memory }
 
     input:
-    tuple val(viewlist_filename), val(output_dirname)
-    tuple val(view_type), val(view_crop_size)
+    tuple val(flyname), val(movie_filename), val(output_dirname)
+    val(view_type)
+    val(view_crop_size)
 
     output:
-    tuple val(viewlist_filename), val(output_dirname)
+    tuple val(flyname), val(movie_filename), val(output_dirname)
 
     script:
+    def force_detect = params.force_detect ? '-r' : ''
     """
     cd /code/apt/deepnet
-    python classify_single_view.py \
-        -viewfile ${viewlist_filename} \
+    python classify_movies_from_single_view.py \
+        -movies ${movie_filename} \
         -view ${view_type} \
+        "${force_detect}" \
         -bodylabelfilename ${params.body_axis_lookup_filename} \
         -lbl_file ${params.label_filename} \
         -crop_reg_file ${params.crop_regression_filename} \
