@@ -3,13 +3,13 @@ DIR=$(cd "$(dirname "$0")"; pwd)
 source ${DIR}/container_versions.sh
 
 docker build \
-    -t registry.int.janelia.org/huston/apt_classifier:${apt_classifier_version} \
-    -t apt_classifier:${apt_classifier_version} \
-    containers/apt_classifier
+    -t registry.int.janelia.org/huston/apt_detect:${apt_detect_version} \
+    -t apt_detect:${apt_detect_version} \
+    containers/apt_detect
 
 #docker build \
-#    -t registry.int.janelia.org/huston/apt_tracker:${apt_tracker_version} \
-#    -t apt_tracker:${apt_tracker_version} \
-#    containers/apt_tracker
+#    -t registry.int.janelia.org/huston/apt_track:${apt_track_version} \
+#    -t apt_track:${apt_track_version} \
+#    containers/apt_track
 
 
