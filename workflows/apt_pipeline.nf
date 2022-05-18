@@ -44,7 +44,7 @@ workflow apt_pipeline {
     )
 
     def pair_detect_results = side_view_detect_results
-    | join(front_view_detect_results, by:0,1)
+    | join(front_view_detect_results, by:[0,1])
 
     emit:
     res = pair_detect_results

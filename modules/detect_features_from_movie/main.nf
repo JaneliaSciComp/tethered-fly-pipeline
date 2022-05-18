@@ -27,10 +27,10 @@ process DETECT_FEATURES_FROM_MOVIE {
     def force_detect = params.force_detect ? '-r' : ''
     """
     cd /code/apt/deepnet
-    python classify_movies_from_single_view.py \
+    python detect_features_from_movies.py \
         -movies ${movie_filename} \
         -view ${view_type} \
-        "${force_detect}" \
+        ${force_detect} \
         -bodylabelfilename ${params.body_axis_lookup_filename} \
         -lbl_file ${params.label_filename} \
         -crop_reg_file ${params.crop_regression_filename} \
