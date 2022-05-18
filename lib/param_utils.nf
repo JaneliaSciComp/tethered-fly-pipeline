@@ -4,6 +4,12 @@ def default_params() {
         apt_detect_container_version: '1.0',
         apt_track_container_version: '1.0',
 
+        apt_detect_cpus: 8,
+        apt_detect_memory: '10G',
+
+        apt_track_cpus: 8,
+        apt_track_memory: '10G',
+
         flydata_dirname_pattern: 'fly[0-9]*',
         sideview_type: 'SIDE',
         sideview_crop_size: '230,350',

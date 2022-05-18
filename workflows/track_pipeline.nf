@@ -40,11 +40,11 @@ workflow track_pipeline {
         },
         params.sideview_dirname_pattern
     )
-    // | map {
-    //     def (fly_dirname, view_filename) = it
-    //     def detect_output_dir = file(view_filename).parent
-    //     [ fly_dirname, view_filename, "${detect_output_dir}"],
-    // }
+    | map {
+        def (fly_dirname, view_filename) = it
+        def detect_output_dir = file(view_filename).parent
+        [ fly_dirname, view_filename, "${detect_output_dir}/detect_results" ]
+    }
 
     def front_view_lists = CREATE_FRONT_VIEW_LIST(
         view_list_inputs.map { 
@@ -52,18 +52,22 @@ workflow track_pipeline {
         },
         params.frontview_dirname_pattern
     )
-    // | map {
-    //     def (fly_dirname, view_filename) = it
-    //     def detect_output_dir = file(view_filename).parent
-    //     [ fly_dirname, view_filename, "${detect_output_dir}"],
-    // }
+    | map {
+        def (fly_dirname, view_filename) = it
+        def detect_output_dir = file(view_filename).parent
+        [ fly_dirname, view_filename, "${detect_output_dir}/detect_results" ]
+    }
 
-    // DETECT_FEATURES_FOR_SIDEVIEW_MOVIES(
-    //     side_view_lists.map { it[1] },
-    //     [ params.sideview_type, params.sideview_crop_size ]
-    // )
+    def side_view_detect_results = DETECT_FEATURES_FOR_SIDEVIEW_MOVIES(
+        side_view_lists.map { [ it[1], it[2] ] },
+        [ params.sideview_type, params.sideview_crop_size ]
+    )
 
+    def front_view_detect_results = DETECT_FEATURES_FOR_FRONTVIEW_MOVIES(
+        front_view_lists.map { [ it[1], it[2] ] },
+        [ params.frontview_type, params.frontview_crop_size ]
+    )
 
     emit:
-    res = side_view_lists | concat(front_view_lists)
+    res = side_view_detect_results | concat(front_view_detect_results)
 }
