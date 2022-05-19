@@ -7,7 +7,7 @@ process DETECT_FEATURES_FROM_MOVIE {
     container { params.apt_detect_container }
     containerOptions { create_container_options([
         file(movie_filename).parent,
-        file(output_dirname).parent.parent,
+        file(output_dirname).parent.parent.parent,
         params.model_cache_dirname,
         file(params.body_axis_lookup_filename).parent,
         file(params.label_filename).parent
