@@ -5,6 +5,7 @@ nextflow.enable.dsl=2
 include {
     default_params;
     apt_detect_container_param;
+    apt_track_container_param;
     input_dir_param;
     output_dir_param;
     temp_tracking_dir_param;
@@ -14,6 +15,7 @@ main_params = default_params() + params
 process_params = main_params +
     [
         apt_detect_container: apt_detect_container_param(main_params),
+        apt_track_container: apt_track_container_param(main_params),
         input_dir: input_dir_param(main_params),
         output_dir: output_dir_param(main_params),
         temp_tracking_dir: temp_tracking_dir_param(main_params),
