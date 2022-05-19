@@ -36,12 +36,7 @@ ENV PATH=/miniconda/bin:${PATH}
 # Install conda packages
 RUN conda config --set always_yes yes --set changeps1 no && \
     conda update -q conda && \
-    conda install python=3.9
-
-RUN conda install -c conda-forge \
-    tensorflow=1.15 \
-    tensorflow-gpu=1.15 \
-    keras=2.2.4
+    conda install python=3.7
 
 RUN conda install -c conda-forge opencv=3.4.4
 
@@ -52,6 +47,11 @@ RUN conda install -c conda-forge \
         matplotlib=3.0.3 \
         future=0.17.1 \
         easydict=1.9
+
+RUN conda install -c conda-forge \
+    tensorflow=1.13.1 \
+    tensorflow-gpu=1.13.1 \
+    keras=2.2.4
 
 RUN pip install --upgrade pip && \
     pip install opencv-python
