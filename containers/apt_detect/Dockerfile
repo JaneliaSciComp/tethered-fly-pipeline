@@ -56,11 +56,6 @@ RUN conda install -c conda-forge \
 RUN pip install --upgrade pip && \
     pip install opencv-python
 
-# !!!!! TO be REMOVED
-RUN apt-get install -y vim
-
-# !!!!!
-
 # Checkout and build the code
 WORKDIR /code/apt
 RUN git clone --branch stephen_working --depth 1 https://github.com/kristinbranson/APT.git .
