@@ -37,9 +37,10 @@ process DETECT_FEATURES_FROM_MOVIE {
     def force_detect_flag = params.force_detect ? '-r' : ''
 
     """
+    ${check_block}
     umask 0002
 
-    ${check_block}
+    mkdir -p "${output_dirname}"
 
     cd /code/apt/deepnet
     python detect_features_from_movies.py \
