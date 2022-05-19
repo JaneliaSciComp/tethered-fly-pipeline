@@ -24,13 +24,28 @@ process DETECT_FEATURES_FROM_MOVIE {
     tuple val(flyname), val(movie_filename), val(output_dirname), val(expected_output_name)
 
     script:
-    def force_detect = params.force_detect ? '-r' : ''
+    def check_block = ''
+    if (!params.force_detect) {
+        check_block = """
+        if [[ -f "${output_dirname}/${expected_output_name}" ]]; then
+            echo "Feature detect result ${output_dirname}/${expected_output_name} already exists"
+            exit 0
+        fi
+        """
+    }
+
+    def force_detect_flag = params.force_detect ? '-r' : ''
+
     """
+    umask 0002
+
+    ${check_block}
+
     cd /code/apt/deepnet
     python detect_features_from_movies.py \
         -movies ${movie_filename} \
         -view ${view_type} \
-        ${force_detect} \
+        ${force_detect_flag} \
         -bodylabelfilename ${params.body_axis_lookup_filename} \
         -lbl_file ${params.label_filename} \
         -crop_reg_file ${params.crop_regression_filename} \

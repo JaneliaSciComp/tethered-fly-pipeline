@@ -3,14 +3,16 @@ def default_params() {
         apt_containers_repo: 'registry.int.janelia.org/huston',
         apt_detect_container_version: '1.0',
         apt_track_container_version: '1.0',
+        error_strategy: 'ignore', // the default nextflow strategy use ignore instead of terminate
 
-        apt_detect_cpus: 8,
-        apt_detect_memory: '20G',
+        apt_detect_cpus: 6,
+        apt_detect_memory: '16G',
 
         apt_track_cpus: 8,
         apt_track_memory: '16G',
 
         force_detect: false,
+        force_track: false,
         flydata_dirname_pattern: 'fly[0-9]*',
         sideview_type: 'SIDE',
         sideview_crop_size: '230,350',

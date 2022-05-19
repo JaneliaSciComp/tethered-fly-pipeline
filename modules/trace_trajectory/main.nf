@@ -2,8 +2,7 @@ include {
     create_container_options;
 } from '../../lib/container_utils'
 
-process TRACE_FEATURES {
-    label 'use_gpu'
+process TRACE_TRAJECTORY {
     container { params.apt_track_container }
     containerOptions { create_container_options([
         file(side_features_filename).parent,
@@ -15,6 +14,7 @@ process TRACE_FEATURES {
     ]) }
     cpus { params.apt_track_cpus }
     memory { params.apt_track_memory }
+    errorStrategy { params.error_strategy }
 
     input:
     tuple val(flyname),
@@ -32,8 +32,20 @@ process TRACE_FEATURES {
           val(front_trk_filename)
 
     script:
+    def check_block = ''
+    if (!params.force_track) {
+        check_block = """
+        if [[ -f "${front_trk_filename}" && -f "${side_trk_filename}" ]]; then
+            echo "Trace files ${front_trk_filename} and ${side_trk_filename} already exist"
+            exit 0
+        fi
+        """
+    }
     """
     umask 0002
+
+    ${check_block}
+
     /app/entrypoint.sh \
     "${three_d_res_filename}" \
     "${front_features_filename}" \
