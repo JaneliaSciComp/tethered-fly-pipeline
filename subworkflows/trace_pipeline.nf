@@ -16,15 +16,14 @@ workflow trace_pipeline {
     def fly_calibrations = GET_TEXT_CONTENT(params.calibrations_filename)
     | flatMap { fn_and_content ->
         def (fn, csv_rows) = fn_and_content
-
-        if (csv_rows == "null")
+        if (csv_rows.trim() == "null") {
             return []
-        else 
+        } else {
             return csv_rows.split(/\s+/)
+        }
     }
-    | map { csv_row ->
-        csv_row.split(/[,]/)
-    }
+    | filter { it.trim() == '' }
+    | map { it.split(/[,]/) }
     | map {
         def (flynum, calibration_filename) = it
         [ "fly${flynum}", calibration_filename ]
