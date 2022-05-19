@@ -32,6 +32,9 @@ process TRACE_TRAJECTORY {
           val(front_trk_filename)
 
     script:
+    def three_d_res_dir = file(three_d_res_filename).parent
+    def side_trk_dir = file(side_trk_filename).parent
+    def front_trk_dir = file(front_trk_filename).parent
     def check_block = ''
     if (!params.force_track) {
         check_block = """
@@ -41,9 +44,6 @@ process TRACE_TRAJECTORY {
         fi
         """
     }
-    def three_d_res_dir = file(three_d_res_filename).parent
-    def side_trk_dir = file(side_trk_filename).parent
-    def front_trk_dir = file(front_trk_filename).parent
     """
     ${check_block}
     umask 0002

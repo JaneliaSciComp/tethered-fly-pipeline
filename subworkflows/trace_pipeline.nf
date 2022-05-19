@@ -22,13 +22,13 @@ workflow trace_pipeline {
             return csv_rows.split(/\s+/)
         }
     }
-    | filter { it.trim() == '' }
+    | filter { it.trim() != '' }
     | map { it.split(/[,]/) }
     | map {
         def (flynum, calibration_filename) = it
         [ "fly${flynum}", calibration_filename ]
     }
-    
+
     def trace_inputs = side_front_pairs
     | combine(fly_calibrations, by: 0)
     | combine(output_dir, by:0)
