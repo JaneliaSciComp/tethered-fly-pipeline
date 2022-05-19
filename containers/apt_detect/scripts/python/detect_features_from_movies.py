@@ -261,6 +261,24 @@ def _get_flydata(movies_list, label_filename):
     return flydata
 
 
+def _gpu_fix():
+    from tensorflow.python.client import device_lib
+
+    gpu_options = tf.GPUOptions(
+        per_process_gpu_memory_fraction=0.333,
+        allow_growth=True
+    )
+    sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+
+    local_device_protos = device_lib.list_local_devices()
+    gpus = [x.name for x in local_device_protos if x.device_type == 'GPU']
+
+    if gpus:
+        print('Physical GPUs:', len(gpus), file=sys.stderr)
+    else:
+        print('No GPU found', file=sys.stderr)
+
+
 def _load_model(lbl_file, view, model_type, model_dir, model_name):
     print('Load model', lbl_file, model_dir, model_name)
     tf.reset_default_graph()
@@ -397,6 +415,8 @@ def main(argv):
 
     flydata = _get_flydata(movies,
                            args.body_lbl_assoc_file)
+
+    _gpu_fix()
 
     conf, model_file, pred_fn = _load_model(args.lbl_file, args.view.value,
                                             args.model_type, args.model_cache_dir, args.model_name)

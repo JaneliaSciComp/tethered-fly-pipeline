@@ -7,7 +7,7 @@ process CREATE_VIDEO_LIST {
     label 'low_memory'
     container { params.apt_detect_container }
     containerOptions { create_container_options([
-        fly_dirname
+        [fly_dirname, 0],
     ]) }
 
     input:

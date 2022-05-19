@@ -5,12 +5,15 @@ include {
 process TRACE_TRAJECTORY {
     container { params.apt_track_container }
     containerOptions { create_container_options([
-        file(side_features_filename).parent,
-        file(front_features_filename).parent,
-        file(kinemat_filename).parent,
-        file(three_d_res_filename).parent.parent.parent,
-        file(side_trk_filename).parent.parent.parent,
-        file(front_trk_filename).parent.parent.parent,
+        [side_features_filename, 1],
+        [front_features_filename, 1],
+        [kinemat_filename, 1],
+        // the location of the result files is:
+        // <output_folder>/<flyfolder-fly123>/<movie folder-C001H001S0002>/<movie name>_3dres.mat
+        // so we mount the parent of the output folder
+        [three_d_res_filename, 4],
+        [side_trk_filename, 4],
+        [front_trk_filename, 4],
     ]) }
     cpus { params.apt_track_cpus }
     memory { params.apt_track_memory }

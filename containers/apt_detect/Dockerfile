@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:22.04
 
 LABEL org.opencontainers.image.licenses="BSD-3-Clause"
 
@@ -9,18 +9,20 @@ RUN apt-get -y install \
     build-essential \
     cmake pkg-config \
     ffmpeg x264 x265 \
-    tcl-dev tk-dev \
-    libatlas-base-dev gfortran \
-    libjasper-dev libgtk2.0-dev \
     libavcodec-dev libavformat-dev \
     libswscale-dev libjpeg-dev \
-    libpng-dev libtiff-dev libjasper-dev libv4l-dev
+    libpng-dev libtiff-dev libv4l-dev
 
 RUN apt-get -y install \
-    libcuda1-384
+    libatlas-base-dev gfortran \
+    libgtk2.0-dev
+
+RUN apt-get -y install \
+    libnvidia-compute-470
 
 ENV DOWNLOAD_CONDA_URL=https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 
+ENV CUDA_VISIBLE_DEVICES=all
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=all
 
@@ -34,11 +36,11 @@ ENV PATH=/miniconda/bin:${PATH}
 # Install conda packages
 RUN conda config --set always_yes yes --set changeps1 no && \
     conda update -q conda && \
-    conda install python=3.7
+    conda install python=3.9
 
-RUN conda install -c anaconda \
-    tensorflow=1.13.1 \
-    tensorflow-gpu=1.13.1 \
+RUN conda install -c conda-forge \
+    tensorflow=1.15 \
+    tensorflow-gpu=1.15 \
     keras=2.2.4
 
 RUN conda install -c conda-forge opencv=3.4.4

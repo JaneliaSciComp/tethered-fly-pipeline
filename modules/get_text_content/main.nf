@@ -7,7 +7,7 @@ process GET_TEXT_CONTENT {
     label 'low_memory'
     container { params.apt_detect_container }
     containerOptions { create_container_options([
-        file(f).parent,
+        [f, 1],
     ]) }
 
     input:

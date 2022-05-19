@@ -1,5 +1,10 @@
 def create_container_options(dirList) {
-    def dirs = dirList.unique(false)
+    def dirs = dirList
+                .collect {
+                    def (f, levels_up) = it
+                    get_parent(f, levels_up)
+                }
+                .unique(false)
     if (workflow.containerEngine == 'singularity') {
         dirs
         .findAll { it != null && it != '' }
@@ -15,4 +20,19 @@ def create_container_options(dirList) {
     } else {
         params.runtime_opts
     }
+}
+
+def get_parent(f, levels_up) {
+    def ff = file(f)
+    def parent = ff
+    def nlevels = levels_up
+    while (nlevels-- > 0) {
+        def p = parent.parent;
+        if (!p)
+            return ff
+        else
+            parent = p
+        
+    }
+    return parent
 }

@@ -6,12 +6,12 @@ process DETECT_FEATURES_FROM_MOVIE {
     label 'use_gpu'
     container { params.apt_detect_container }
     containerOptions { create_container_options([
-        file(movie_filename).parent,
-        file(output_dirname).parent.parent.parent,
-        params.model_cache_dirname,
-        file(params.body_axis_lookup_filename).parent,
-        file(params.label_filename).parent,
-        file(params.crop_regression_filename).parent
+        [movie_filename, 1],
+        [output_dirname, 3],
+        [params.model_cache_dirname, 0],
+        [params.body_axis_lookup_filename, 1],
+        [params.label_filename, 1],
+        [params.crop_regression_filename, 1],
     ]) }
     cpus { params.apt_detect_cpus }
     memory { params.apt_detect_memory }
