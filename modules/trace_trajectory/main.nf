@@ -41,10 +41,16 @@ process TRACE_TRAJECTORY {
         fi
         """
     }
+    def three_d_res_dir = file(three_d_res_filename).parent
+    def side_trk_dir = file(side_trk_filename).parent
+    def front_trk_dir = file(front_trk_filename).parent
     """
+    ${check_block}
     umask 0002
 
-    ${check_block}
+    mkdir -p "${three_d_res_dir}"
+    mkdir -p "${side_trk_dir}"
+    mkdir -p "${front_trk_dir}"
 
     /app/entrypoint.sh \
     "${three_d_res_filename}" \
