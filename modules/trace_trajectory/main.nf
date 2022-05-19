@@ -8,9 +8,9 @@ process TRACE_TRAJECTORY {
         file(side_features_filename).parent,
         file(front_features_filename).parent,
         file(kinemat_filename).parent,
-        file(three_d_res_filename).parent,
-        file(side_trk_filename).parent.parent,
-        file(front_trk_filename).parent.parent,
+        file(three_d_res_filename).parent.parent.parent,
+        file(side_trk_filename).parent.parent.parent,
+        file(front_trk_filename).parent.parent.parent,
     ]) }
     cpus { params.apt_track_cpus }
     memory { params.apt_track_memory }

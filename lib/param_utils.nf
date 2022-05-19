@@ -22,12 +22,12 @@ def default_params() {
         frontview_crop_size: '350,350',
         frontview_dirname_pattern: 'C002*002_c.avi',
         frontview_detect_result_suffix: '_front',
-        body_axis_lookup_filename: '/Users/goinac/Work/HHMI/stephen-huston/apt-pipeline/local/data/samples/fly2BodyAxis_lookupTable_Ben.csv',
-        label_filename: '/Users/goinac/Work/HHMI/stephen-huston/apt-pipeline/local/data/model/sh_trn5017_20200121_stripped.lbl',
-        crop_regression_filename: '/Users/goinac/Work/HHMI/stephen-huston/apt-pipeline/local/data/model/crop_regression_params.mat',
-        model_cache_dirname: '/Users/goinac/Work/HHMI/stephen-huston/apt-pipeline/local/apt_model_cache',
-        model_name: 'stephen_20200124',
-        calibrations_filename: '/Users/goinac/Work/HHMI/stephen-huston/apt-pipeline/local/data/samples/fly2DLT_lookupTableStephen.csv'
+        body_axis_lookup_filename: '',
+        label_filename: '',
+        crop_regression_filename: '',
+        model_cache_dirname: '',
+        model_name: '',
+        calibrations_filename: ''
     ]
 }
 
