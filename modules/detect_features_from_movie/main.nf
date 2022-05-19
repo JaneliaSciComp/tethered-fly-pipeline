@@ -10,7 +10,8 @@ process DETECT_FEATURES_FROM_MOVIE {
         file(output_dirname).parent.parent.parent,
         params.model_cache_dirname,
         file(params.body_axis_lookup_filename).parent,
-        file(params.label_filename).parent
+        file(params.label_filename).parent,
+        file(params.crop_regression_filename).parent
     ]) }
     cpus { params.apt_detect_cpus }
     memory { params.apt_detect_memory }
