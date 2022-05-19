@@ -30,7 +30,7 @@ workflow trace_pipeline {
         [ "fly${flynum}", calibration_filename ]
     }
     
-    def track_inputs = side_front_pairs
+    def trace_inputs = side_front_pairs
     | combine(fly_calibrations, by: 0)
     | combine(output_dir, by:0)
     | map {
@@ -51,8 +51,12 @@ workflow trace_pipeline {
         ]
     }
 
+    def trace_results = TRACE_FEATURES(
+        trace_inputs
+    )
+
     emit:
-    res = track_inputs
+    res = trace_results
 }
 
 def create_trace_filename(full_fn, suffix) {

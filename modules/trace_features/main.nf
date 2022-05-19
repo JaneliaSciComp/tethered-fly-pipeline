@@ -6,11 +6,12 @@ process TRACE_FEATURES {
     label 'use_gpu'
     container { params.apt_track_container }
     containerOptions { create_container_options([
-        file(movie_filename).parent,
-        file(output_dirname).parent.parent,
-        params.model_cache_dirname,
-        file(params.body_axis_lookup_filename).parent,
-        file(params.label_filename).parent
+        file(side_features_filename).parent,
+        file(front_features_filename).parent,
+        file(kinemat_filename).parent,
+        file(three_d_res_filename).parent,
+        file(side_trk_filename).parent.parent,
+        file(front_trk_filename).parent.parent,
     ]) }
     cpus { params.apt_track_cpus }
     memory { params.apt_track_memory }
@@ -25,6 +26,10 @@ process TRACE_FEATURES {
           val(front_trk_filename)
 
     output:
+    tuple val(flyname),
+          val(three_d_res_filename),
+          val(side_trk_filename),
+          val(front_trk_filename)
 
     script:
     """
