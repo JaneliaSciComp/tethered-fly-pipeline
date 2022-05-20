@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export JAVA_HOME=$HOME/tools/jdk-17
-PROFILE="-profile janelia-lsf"
+PROFILE="-profile janeliaLSF"
 LSF_PROJECT_CODE=huston
 
 DATA_DIR=/groups/huston/hustonlab/flp-chrimson_experiments/fly_4315_to_4320_tdtKir
