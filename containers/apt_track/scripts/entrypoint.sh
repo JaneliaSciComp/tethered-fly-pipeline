@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -d /scratch ] ; then
-  export MCR_CACHE_ROOT="/scratch/${USER}/apt_track/mcr_cache_${LSB_JOBID}_$$"
+  export MCR_CACHE_ROOT="/scratch/${USER}/apt_track/mcr_cache_$$"
 else
   export MCR_CACHE_ROOT=`mktemp -u`
 fi
