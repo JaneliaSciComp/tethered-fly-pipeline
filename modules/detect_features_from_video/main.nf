@@ -2,11 +2,11 @@ include {
     create_container_options;
 } from '../../lib/container_utils'
 
-process DETECT_FEATURES_FROM_MOVIE {
+process DETECT_FEATURES_FROM_VIDEO {
     label 'use_gpu'
     container { params.apt_detect_container }
     containerOptions { create_container_options([
-        [movie_filename, 1],
+        [video_filename, 1],
         [output_dirname, 3],
         [params.model_cache_dirname, 0],
         [params.body_axis_lookup_filename, 1],
@@ -17,12 +17,12 @@ process DETECT_FEATURES_FROM_MOVIE {
     memory { params.apt_detect_memory }
 
     input:
-    tuple val(flyname), val(movie_filename), val(output_dirname), val(expected_output_name)
+    tuple val(flyname), val(video_filename), val(output_dirname), val(expected_output_name)
     val(view_type)
     val(view_crop_size)
 
     output:
-    tuple val(flyname), val(movie_filename), val(output_dirname), val(expected_output_name)
+    tuple val(flyname), val(video_filename), val(output_dirname), val(expected_output_name)
 
     script:
     def check_block = ''
@@ -45,7 +45,7 @@ process DETECT_FEATURES_FROM_MOVIE {
 
     cd /code/apt/deepnet
     python detect_features_from_movies.py \
-        -movies ${movie_filename} \
+        -movies ${video_filename} \
         -view ${view_type} \
         ${force_detect_flag} \
         -bodylabelfilename ${params.body_axis_lookup_filename} \

@@ -12,7 +12,7 @@ process CREATE_VIDEO_LIST {
 
     input:
     tuple val(fly), val(fly_dirname)
-    val(pattern)
+    val(video_name_pattern)
 
     output:
     tuple val(fly), env(movies_list)
@@ -20,6 +20,6 @@ process CREATE_VIDEO_LIST {
     script:
     def excluded_path = '! -path "*calib*"'
     """
-    movies_list=`find "${fly_dirname}" -name "${pattern}" ${excluded_path} | sort`
+    movies_list=`find "${fly_dirname}" -name "${video_name_pattern}" ${excluded_path} | sort`
     """    
 }

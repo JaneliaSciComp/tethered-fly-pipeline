@@ -35,7 +35,7 @@ workflow apt_pipeline {
         apt_inputs,
         tmp_apt_outputs,
         params.sideview_type,
-        params.sideview_dirname_pattern,
+        params.sideview_moviename_pattern,
         params.sideview_crop_size,
         params.sideview_detect_result_suffix
     )
@@ -44,7 +44,7 @@ workflow apt_pipeline {
         apt_inputs,
         tmp_apt_outputs,
         params.frontview_type,
-        params.frontview_dirname_pattern,
+        params.frontview_moviename_pattern,
         params.frontview_crop_size,
         params.frontview_detect_result_suffix
     )
