@@ -2,7 +2,7 @@ include {
     create_container_options;
 } from '../../lib/container_utils'
 
-process TRACE_TRAJECTORY {
+process COMPUTE_TRAJECTORIES {
     container { params.apt_track_container }
     containerOptions { create_container_options([
         [side_features_filename, 1],

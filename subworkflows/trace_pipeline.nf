@@ -3,8 +3,8 @@ include {
 } from '../modules/get_text_content/main'
 
 include {
-    TRACE_TRAJECTORY;
-} from '../modules/trace_trajectory/main'
+    COMPUTE_TRAJECTORIES;
+} from '../modules/compute_trajectories/main'
 
 workflow trace_pipeline {
     take:
@@ -50,7 +50,7 @@ workflow trace_pipeline {
         ]
     }
 
-    def trace_results = TRACE_TRAJECTORY(
+    def trace_results = COMPUTE_TRAJECTORIES(
         trace_inputs
     )
 
