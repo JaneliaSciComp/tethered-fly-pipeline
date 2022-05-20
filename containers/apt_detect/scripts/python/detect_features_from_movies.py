@@ -251,7 +251,8 @@ def _get_flydata(movies_list, label_filename):
         for l in f:
             lparts = l.split(',')
             if len(lparts) != 2:
-                print("Error splitting body label file line %s into two parts" % l, file=sys.stderr)
+                print("Error splitting body label file line %s into two parts" %
+                      l, file=sys.stderr)
                 raise exit(1)
             current_flynum = int(lparts[0])
             current_flydata = flydata.get(current_flynum)
@@ -261,7 +262,7 @@ def _get_flydata(movies_list, label_filename):
     return flydata
 
 
-def _gpu_fix():
+def _gpu_info():
     from tensorflow.python.client import device_lib
 
     gpu_options = tf.GPUOptions(
@@ -274,7 +275,7 @@ def _gpu_fix():
     gpus = [x.name for x in local_device_protos if x.device_type == 'GPU']
 
     if gpus:
-        print('Physical GPUs:', len(gpus), file=sys.stderr)
+        print('Physical GPUs:', len(gpus), gpus, file=sys.stderr)
     else:
         print('No GPU found', file=sys.stderr)
 
@@ -416,7 +417,7 @@ def main(argv):
     flydata = _get_flydata(movies,
                            args.body_lbl_assoc_file)
 
-    _gpu_fix()
+    _gpu_info()
 
     conf, model_file, pred_fn = _load_model(args.lbl_file, args.view.value,
                                             args.model_type, args.model_cache_dir, args.model_name)

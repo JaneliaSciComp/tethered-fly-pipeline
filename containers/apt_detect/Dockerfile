@@ -1,28 +1,27 @@
-FROM ubuntu:22.04
+FROM ubuntu:18.04
 
 LABEL org.opencontainers.image.licenses="BSD-3-Clause"
 
 RUN apt-get -y update
 
-RUN apt-get -y install \
-    git wget unzip \
-    build-essential \
-    cmake pkg-config \
-    ffmpeg x264 x265 \
-    libavcodec-dev libavformat-dev \
-    libswscale-dev libjpeg-dev \
-    libpng-dev libtiff-dev libv4l-dev
+RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y tzdata
 
 RUN apt-get -y install \
+    git wget unzip \
+    ffmpeg x264 x265 \
+    libavcodec-dev libavformat-dev \
+    libjpeg-dev libpng-dev libtiff-dev libv4l-dev
+
+RUN apt-get -y install \
+    libswscale-dev \
+    tcl-dev tk-dev \
     libatlas-base-dev gfortran \
     libgtk2.0-dev
 
-RUN apt-get -y install \
-    libnvidia-compute-470
-
 ENV DOWNLOAD_CONDA_URL=https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 
-ENV CUDA_VISIBLE_DEVICES=all
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=all
 
@@ -49,9 +48,12 @@ RUN conda install -c conda-forge \
         easydict=1.9
 
 RUN conda install -c conda-forge \
-    tensorflow=1.13.1 \
-    tensorflow-gpu=1.13.1 \
-    keras=2.2.4
+    tensorflow=1.15 \
+    tensorflow-gpu=1.15
+
+RUN conda install -c conda-forge \
+    keras=2.2.4 \
+    keras-gpu=2.2.4
 
 RUN pip install --upgrade pip && \
     pip install opencv-python
