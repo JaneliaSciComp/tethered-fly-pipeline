@@ -34,7 +34,7 @@ workflow apt_pipeline {
     def side_view_detect_results = side_view_detect(
         apt_inputs,
         tmp_apt_outputs,
-        params.sideview_type,
+        'SIDE', // this is a constant for side view
         params.sideview_videoname_pattern,
         params.sideview_crop_size,
         params.sideview_detect_result_suffix
@@ -43,7 +43,7 @@ workflow apt_pipeline {
     def front_view_detect_results = front_view_detect(
         apt_inputs,
         tmp_apt_outputs,
-        params.frontview_type,
+        'FRONT', // this is a constant for front view
         params.frontview_videoname_pattern,
         params.frontview_crop_size,
         params.frontview_detect_result_suffix
