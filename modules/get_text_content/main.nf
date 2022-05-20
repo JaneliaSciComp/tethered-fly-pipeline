@@ -5,6 +5,7 @@ include {
 process GET_TEXT_CONTENT {
     label 'low_cpu'
     label 'low_memory'
+    label 'use_local'
     container { params.apt_detect_container }
     containerOptions { create_container_options([
         [f, 1],
