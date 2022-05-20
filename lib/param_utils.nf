@@ -6,10 +6,10 @@ def default_params() {
         error_strategy: 'ignore', // the default nextflow strategy use ignore instead of terminate
 
         apt_detect_cpus: 2,
-        apt_detect_memory: '24G',
+        apt_detect_memory: '30G',
 
         apt_track_cpus: 3,
-        apt_track_memory: '24G',
+        apt_track_memory: '45G',
 
         force_detect: false,
         force_track: false,
