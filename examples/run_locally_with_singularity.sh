@@ -1,7 +1,5 @@
 #!/bin/bash
 
-PROFILE="-profile standard"
-
 DATA_DIR=/groups/huston/hustonlab/flp-chrimson_experiments/fly_4315_to_4320_tdtKir
 RESULTS_DIR=/nrs/scicompsoft/goinac/huston/results
 INTERMEDIATE_RESULTS_DIR=/nrs/scicompsoft/goinac/huston/tmp_tracking_result
@@ -9,7 +7,6 @@ INTERMEDIATE_RESULTS_DIR=/nrs/scicompsoft/goinac/huston/tmp_tracking_result
 JAVA_HOME=$HOME/tools/jdk-17 \
 TMPDIR=/data/tmp \
 nextflow run main.nf \
-    $PROFILE \
     --i ${DATA_DIR} \
     --o ${RESULTS_DIR} \
     --tmp_tracking_dir ${INTERMEDIATE_RESULTS_DIR} \

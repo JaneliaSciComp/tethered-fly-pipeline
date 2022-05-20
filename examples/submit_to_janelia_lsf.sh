@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export JAVA_HOME=$HOME/tools/jdk-17
-PROFILE="-profile lsf"
+PROFILE="-profile janelia-lsf"
 LSF_PROJECT_CODE=huston
 
 DATA_DIR=/groups/huston/hustonlab/flp-chrimson_experiments/fly_4315_to_4320_tdtKir
@@ -11,7 +11,6 @@ INTERMEDIATE_RESULTS_DIR=/nrs/scicompsoft/goinac/huston/tmp_tracking_result
 bsub -e fly4315.err -o fly4315.out -P ${LSF_PROJECT_CODE} \
 nextflow main.nf \
     $PROFILE \
-    --runtime_opts "-B /scratch" \
     --lsf_opts "-P ${LSF_PROJECT_CODE}" \
     --i ${DATA_DIR} \
     --o ${RESULTS_DIR} \
