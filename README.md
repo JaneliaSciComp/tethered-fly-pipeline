@@ -50,7 +50,7 @@ On Linux you can simply run the pipeline with the standard profile:
 
 ### Run the pipeline on Janelia's LSF cluster
 
-To run the pipeline on Janelia's LSF cluster you submit the main job to the cluster and then the main job will take care of submitting all the tasks to the cluster. An example o:
+To run the pipeline on Janelia's LSF cluster you submit the main job to the cluster and then the main job will take care of submitting all the other sub-tasks to the cluster.
 ```
 export JAVA_HOME=/usr/lib/jvm/jre-17
 LSF_PROJECT_CODE=clusterProjectCode
