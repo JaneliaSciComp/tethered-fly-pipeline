@@ -10,7 +10,7 @@ The pipeline supports many types of parameters for customization to your compute
 | --i| Top level directory for experiment containing all individual fly subdirectories |
 | --o | Directory where final results `.trk`, `_3dres.mat` will be generated. The per fly and per video results will be generated in the corresponding subfolders as found in the input, e.g., `.../fly4315/C001H001S0002/C001H001S0002_c.trk` |
 | --tmp_tracking_dir | Directory containing the intermediate results generated during the `detect` step |
-| --body_axis_lookup_filename | `/groups/huston/hustonlab/flp-chrimson_experiments/fly2BodyAxis_lookupTable_Ben.csv` |
+| --body_axis_lookup_filename | .csv file containting fly numbers with the corresponding body axis .lbl files e.g. `/groups/huston/hustonlab/flp-chrimson_experiments/fly2BodyAxis_lookupTable_Ben.csv` |
 | --label_filename | `/groups/branson/bransonlab/apt/experiments/data/sh_trn5017_20200121_stripped.lbl` |
 | --crop_regression_filename | `/groups/branson/bransonlab/mayank/stephen_copy/crop_regression_params.mat` |
 | --model_cache_dirname | `/groups/branson/bransonlab/mayank/stephen_copy/apt_cache` |
