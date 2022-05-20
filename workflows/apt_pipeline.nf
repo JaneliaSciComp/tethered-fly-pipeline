@@ -35,7 +35,7 @@ workflow apt_pipeline {
         apt_inputs,
         tmp_apt_outputs,
         params.sideview_type,
-        params.sideview_moviename_pattern,
+        params.sideview_videoname_pattern,
         params.sideview_crop_size,
         params.sideview_detect_result_suffix
     )
@@ -44,7 +44,7 @@ workflow apt_pipeline {
         apt_inputs,
         tmp_apt_outputs,
         params.frontview_type,
-        params.frontview_moviename_pattern,
+        params.frontview_videoname_pattern,
         params.frontview_crop_size,
         params.frontview_detect_result_suffix
     )
@@ -52,15 +52,15 @@ workflow apt_pipeline {
     def paired_detect_results = side_view_detect_results
     | join(front_view_detect_results, by:[0,1])
     | map {
-        def (flyname, movie_key,
-             side_movie, side_detect_result_dir, side_detect_result_name,
-             front_movie, front_detect_result_dir, front_detect_result_name
+        def (flyname, video_key,
+             side_video, side_detect_result_dir, side_detect_result_name,
+             front_video, front_detect_result_dir, front_detect_result_name
             ) = it
         [
             flyname,
-            side_movie,
+            side_video,
             "${side_detect_result_dir}/${side_detect_result_name}",
-            front_movie,
+            front_video,
             "${front_detect_result_dir}/${front_detect_result_name}"
         ]
     }
