@@ -15,17 +15,19 @@ The pipeline supports many types of parameters for customization to your compute
 | --crop_regression_filename | `/groups/branson/bransonlab/mayank/stephen_copy/crop_regression_params.mat` |
 | --model_cache_dirname | `/groups/branson/bransonlab/mayank/stephen_copy/apt_cache` |
 | --model_name | `stephen_20200124` |
-| --calibrations_filename| CSV file containing fly number with the corresponding calibration file|
+| --calibrations_filename| .csv file containing fly numbers with the corresponding calibration files |
 
 
 ## Parameters with default values
 
+The following parameters should almost never be touched and if you change them make sure you know what you are doing because some, such as crop_size parameters may result in failure.
+
 | Argument | Default | Description |
 |-|-|-|
 | --flydata_dirname_pattern | `fly[0-9]*` | Regex pattern for selecting the fly directories. This can be used for running the pipeline only for one or two flies for example: `fly123[4,8]` - selects only `fly1234` and `fly1238` as inputs |
-| --sideview_videoname_pattern | `C001*.avi` | Filename pattern for **SIDE** view videos. |
-| --frontview_videoname_pattern | `C002*.avi` | Filename pattern for **FRONT** view videos |
-| --sideview_crop_size | `230,350` | Default crop size used for **SIDE** view |
-| --frontview_crop_size | `350,350` | Default crop size used for **FRONT** view|
+| --sideview_videoname_pattern | `C001*.avi` | Filename pattern for **SIDE** view videos. Changing this may require settting `frontview_videoname_pattern` so that we process the side and front view in pairs. |
+| --frontview_videoname_pattern | `C002*.avi` | Filename pattern for **FRONT** view videos. Changing this may require settting `sideview_videoname_pattern` so that we process the side and front view in pairs. |
+| --sideview_crop_size | `230,350` | Default crop size used for **SIDE** view. **Only change this if you know how this impacts the algorithm.** |
+| --frontview_crop_size | `350,350` | Default crop size used for **FRONT** view. **Only change this if you know how this impacts the algorithm.** |
 | --sideview_detect_result_suffix | `_side` | Filename suffix used for **SIDE** view intermediated results |
 | --frontview_detect_result_suffix | `_front` | Filename suffix used for **FRONT** view intermediate results |
