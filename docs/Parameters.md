@@ -5,8 +5,8 @@ The pipeline supports many types of parameters for customization to your compute
 
 ## Data Input/Output Arguments
 
-| Argument   |Description                                                                           |
-|------------|---------------------------------------------------------------------------------------|
+| Argument   |Description |
+|-|-|
 | --i| Top level directory for experiment containing all individual fly subdirectories |
 | --o | Directory where final results `.trk`, `_3dres.mat` will be generated. The per fly and per video results will be generated in the corresponding subfolders as found in the input, e.g., `.../fly4315/C001H001S0002/C001H001S0002_c.trk` |
 | --tmp_tracking_dir | Directory containing the intermediate results generated during the `detect` step |
@@ -16,3 +16,16 @@ The pipeline supports many types of parameters for customization to your compute
 | --model_cache_dirname | `/groups/branson/bransonlab/mayank/stephen_copy/apt_cache` |
 | --model_name | `stephen_20200124` |
 | --calibrations_filename| CSV file containing fly number with the corresponding calibration file|
+
+
+## Parameters with default values
+
+| Argument | Default | Description |
+|-|-|-|
+| --flydata_dirname_pattern | `fly[0-9]*` | Regex pattern for selecting the fly directories. This can be used for running the pipeline only for one or two flies for example: `fly123[4,8]` - selects only `fly1234` and `fly1238` as inputs |
+| --sideview_videoname_pattern | `C001*.avi` | Filename pattern for **SIDE** view videos. |
+| --frontview_videoname_pattern | `C002*.avi` | Filename pattern for **FRONT** view videos |
+| --sideview_crop_size | `230,350` | Default crop size used for **SIDE** view |
+| --frontview_crop_size | `350,350` | Default crop size used for **FRONT** view|
+| --sideview_detect_result_suffix | `_side` | Filename suffix used for **SIDE** view intermediated results |
+| --frontview_detect_result_suffix | `_front` | Filename suffix used for **FRONT** view intermediate results |
