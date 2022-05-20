@@ -1,6 +1,7 @@
 #!/bin/bash
 
-export JAVA_HOME=$HOME/tools/jdk-17
+export JAVA_HOME=/usr/lib/jvm/jre-17
+
 PROFILE="-profile janeliaLSF"
 LSF_PROJECT_CODE=huston
 
