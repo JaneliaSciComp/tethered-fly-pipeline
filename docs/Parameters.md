@@ -11,10 +11,10 @@ The pipeline supports many types of parameters for customization to your compute
 | --o | Directory where final results `.trk`, `_3dres.mat` will be generated. The per fly and per video results will be generated in the corresponding subfolders as found in the input, e.g., `.../fly4315/C001H001S0002/C001H001S0002_c.trk` |
 | --tmp_tracking_dir | Directory containing the intermediate results generated during the `detect` step |
 | --body_axis_lookup_filename | .csv file containting fly numbers with the corresponding body axis .lbl files e.g. `/groups/huston/hustonlab/flp-chrimson_experiments/fly2BodyAxis_lookupTable_Ben.csv` |
-| --label_filename | `/groups/branson/bransonlab/apt/experiments/data/sh_trn5017_20200121_stripped.lbl` |
-| --crop_regression_filename | `/groups/branson/bransonlab/mayank/stephen_copy/crop_regression_params.mat` |
-| --model_cache_dirname | `/groups/branson/bransonlab/mayank/stephen_copy/apt_cache` |
-| --model_name | `stephen_20200124` |
+| --label_filename | File containing parameters used for training the network. These are needed for loading the model, e.g. `/groups/branson/bransonlab/apt/experiments/data/sh_trn5017_20200121_stripped.lbl` |
+| --crop_regression_filename | The regression parameters for finding the cropped region used for training, e.g. `/groups/branson/bransonlab/mayank/stephen_copy/crop_regression_params.mat`|
+| --model_cache_dirname | Parent directory where the trained deep models are stored, e.g. `/groups/branson/bransonlab/mayank/stephen_copy/apt_cache` |
+| --model_name | Deep model sub-directory under `model_cache_dirname`, e.g. `stephen_20200124`  |
 | --calibrations_filename| .csv file containing fly numbers with the corresponding calibration files |
 
 
