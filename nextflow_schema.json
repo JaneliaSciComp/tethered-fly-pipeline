@@ -4,81 +4,203 @@
     "title": "Tethered fly pipeline parameters",
     "description": "This pipeline uses Nextflow and processes videos of tethered flies using APT to produce tracking output.",
     "type": "object",
-    "properties": {
-        "i": {
-            "type": "string",
-            "description": "Top level directory for experiment containing all individual fly subdirectories"
+    "definitions": {
+        "data": {
+            "title": "Data",
+            "type": "object",
+            "description": "Filepaths to directories and files used for input and output",
+            "properties": {
+                "i": {
+                    "type": "string",
+                    "description": "Top level directory for experiment containing all individual fly subdirectories",
+                    "fa_icon": "fas fa-folder"
+                },
+                "o": {
+                    "type": "string",
+                    "description": "Directory where final results `.trk`, `_3dres.mat` will be generated. The per fly and per video results will be generated in the corresponding subfolders as found in the input, e.g., `.../fly4315/C001H001S0002/C001H001S0002_c.trk`",
+                    "fa_icon": "fas fa-folder"
+                },
+                "tmp_tracking_dir": {
+                    "type": "string",
+                    "description": "Directory containing the intermediate results generated during the `detect` step",
+                    "fa_icon": "fas fa-folder"
+                },
+                "label_filename": {
+                    "type": "string",
+                    "description": "e.g. `/groups/branson/bransonlab/apt/experiments/data/sh_trn5017_20200121_stripped.lbl`",
+                    "fa_icon": "fas fa-file"
+                },
+                "body_axis_lookup_filename": {
+                    "type": "string",
+                    "description": ".csv file containting fly numbers with the corresponding body axis .lbl files e.g. `/groups/huston/hustonlab/flp-chrimson_experiments/fly2BodyAxis_lookupTable_Ben.csv` | | --label_filename | `/groups/branson/bransonlab/apt/experiments/data/sh_trn5017_20200121_stripped.lbl`",
+                    "fa_icon": "fas fa-file"
+                },
+                "crop_regression_filename": {
+                    "type": "string",
+                    "description": "e.g. `/groups/branson/bransonlab/mayank/stephen_copy/crop_regression_params.mat`",
+                    "fa_icon": "fas fa-file"
+                },
+                "model_name": {
+                    "type": "string",
+                    "description": "e.g. `stephen_20200124`",
+                    "fa_icon": "fas fa-file"
+                },
+                "calibrations_filename": {
+                    "type": "string",
+                    "description": ".csv file containing fly numbers with the corresponding calibration files",
+                    "fa_icon": "fas fa-file"
+                },
+                "model_cache_dirname": {
+                    "type": "string",
+                    "description": "`/groups/branson/bransonlab/mayank/stephen_copy/apt_cache`",
+                    "fa_icon": "fas fa-file"
+                },
+                "flydata_dirname_pattern": {
+                    "type": "string",
+                    "description": "Regex pattern for selecting the fly directories. This can be used for running the pipeline only for one or two flies for example: `fly123[4,8]` - selects only `fly1234` and `fly1238` as inputs. Default: `fly[0-9]*`",
+                    "fa_icon": "fas fa-star-of-life"
+                },
+                "sideview_videoname_pattern": {
+                    "type": "string",
+                    "description": "Filename pattern for **SIDE** view videos. Changing this may require settting `frontview_videoname_pattern` so that we process the side and front view in pairs. Default: `C001*.avi`",
+                    "fa_icon": "fas fa-star-of-life"
+                },
+                "frontview_videoname_pattern": {
+                    "type": "string",
+                    "description": "Filename pattern for **FRONT** view videos. Changing this may require settting `sideview_videoname_pattern` so that we process the side and front view in pairs.  Default: `C002*.avi`",
+                    "fa_icon": "fas fa-star-of-life"
+                },
+                "sideview_detect_result_suffix": {
+                    "type": "string",
+                    "description": "Filename suffix used for **SIDE** view intermediated results. Default: `_side`",
+                    "fa_icon": "fas fa-file-word"
+                },
+                "frontview_detect_result_suffix": {
+                    "type": "string",
+                    "description": "Filename suffix used for **FRONT** view intermediate results. Default: `_front`",
+                    "fa_icon": "fas fa-file-word"
+                }
+            },
+            "required": [
+                "i",
+                "o",
+                "tmp_tracking_dir",
+                "label_filename",
+                "body_axis_lookup_filename",
+                "crop_regression_filename",
+                "model_name",
+                "calibrations_filename",
+                "model_cache_dirname"
+            ],
+            "fa_icon": "fas fa-database"
         },
-        "o": {
-            "type": "string",
-            "description": "Directory where final results `.trk`, `_3dres.mat` will be generated. The per fly and per video results will be generated in the corresponding subfolders as found in the input, e.g., `.../fly4315/C001H001S0002/C001H001S0002_c.trk`"
+        "detect_parameters": {
+            "title": "Detection parameters",
+            "type": "object",
+            "description": "Parameters for the detection step",
+            "properties": {
+                "apt_detect_cpus": {
+                    "type": "string",
+                    "fa_icon": "fas fa-microchip",
+                    "description": "Number of CPU cores for detection. Default: 2"
+                },
+                "apt_detect_memory": {
+                    "type": "string",
+                    "fa_icon": "fas fa-memory",
+                    "description": "Amount of memory for detection. Default: 30 G"
+                }
+            },
+            "fa_icon": "fas fa-bullseye"
         },
-        "tmp_tracking_dir": {
-            "type": "string",
-            "description": "Directory containing the intermediate results generated during the `detect` step"
+        "track_parameters": {
+            "title": "Tracking parameters",
+            "type": "object",
+            "description": "Parameters for the tracking step",
+            "properties": {
+                "sideview_crop_size": {
+                    "type": "string",
+                    "description": "Default crop size used for **SIDE** view. Only change this if you know how this impacts the algorithm. Default: `230,350`",
+                    "hidden": true,
+                    "fa_icon": "fas fa-crop-alt"
+                },
+                "frontview_crop_size": {
+                    "type": "string",
+                    "description": "Default crop size used for **FRONT** view. Only change this if you know how this impacts the algorithm. Default: `350,350`",
+                    "hidden": true,
+                    "fa_icon": "fas fa-crop-alt"
+                },
+                "apt_track_cpus": {
+                    "type": "string",
+                    "fa_icon": "fas fa-microchip",
+                    "description": "Number of CPU cores for tracking. Default: 3"
+                },
+                "apt_track_memory": {
+                    "type": "string",
+                    "fa_icon": "fas fa-memory",
+                    "description": "Amount of memory for tracking. Default: 45 G"
+                }
+            },
+            "fa_icon": "fas fa-bullseye"
         },
-        "body_axis_lookup_filename": {
-            "type": "string",
-            "description": ".csv file containting fly numbers with the corresponding body axis .lbl files e.g. `/groups/huston/hustonlab/flp-chrimson_experiments/fly2BodyAxis_lookupTable_Ben.csv` | | --label_filename | `/groups/branson/bransonlab/apt/experiments/data/sh_trn5017_20200121_stripped.lbl`"
+        "containers": {
+            "title": "Container Options",
+            "type": "object",
+            "fa_icon": "fab fa-docker",
+            "properties": {
+                "apt_detect_container": {
+                    "type": "string",
+                    "description": "Docker container for running detect using APT. Default: `registry.int.janelia.org/huston/apt_detect:1.0`",
+                    "fa_icon": "fas fa-box-open",
+                    "hidden": true
+                },
+                "apt_track_container": {
+                    "type": "string",
+                    "description": "Docker container for running tracking using APT. Default: `registry.int.janelia.org/huston/apt_track:1.0`",
+                    "fa_icon": "fas fa-box-open",
+                    "hidden": true
+                }
+            },
+            "description": "Customize the Docker containers used for each pipeline step"
         },
-        "label_filename": {
-            "type": "string",
-            "description": "e.g. `/groups/branson/bransonlab/apt/experiments/data/sh_trn5017_20200121_stripped.lbl`"
-        },
-        "crop_regression_filename": {
-            "type": "string",
-            "description": "e.g. `/groups/branson/bransonlab/mayank/stephen_copy/crop_regression_params.mat`"
-        },
-        "model_cache_dirname": {
-            "type": "string",
-            "description": "`/groups/branson/bransonlab/mayank/stephen_copy/apt_cache`"
-        },
-        "model_name": {
-            "type": "string",
-            "description": "e.g. `stephen_20200124`"
-        },
-        "calibrations_filename": {
-            "type": "string",
-            "description": ".csv file containing fly numbers with the corresponding calibration files"
-        },
-        "flydata_dirname_pattern": {
-            "type": "string",
-            "description": "Regex pattern for selecting the fly directories. This can be used for running the pipeline only for one or two flies for example: `fly123[4,8]` - selects only `fly1234` and `fly1238` as inputs. Default: `fly[0-9]*`"
-        },
-        "sideview_videoname_pattern": {
-            "type": "string",
-            "description": "Filename pattern for **SIDE** view videos. Changing this may require settting `frontview_videoname_pattern` so that we process the side and front view in pairs. Default: `C001*.avi`"
-        },
-        "frontview_videoname_pattern": {
-            "type": "string",
-            "description": "Filename pattern for **FRONT** view videos. Changing this may require settting `sideview_videoname_pattern` so that we process the side and front view in pairs.  Default: `C002*.avi`"
-        },
-        "sideview_crop_size": {
-            "type": "string",
-            "description": "Default crop size used for **SIDE** view. **Only change this if you know how this impacts the algorithm.** Default: `230,350`"
-        },
-        "frontview_crop_size": {
-            "type": "string",
-            "description": "Default crop size used for **FRONT** view. **Only change this if you know how this impacts the algorithm.**  Default: `350,350`"
-        },
-        "sideview_detect_result_suffix": {
-            "type": "string",
-            "description": "Filename suffix used for **SIDE** view intermediated results. Default: `_side`"
-        },
-        "frontview_detect_result_suffix": {
-            "type": "string",
-            "description": "Filename suffix used for **FRONT** view intermediate results. Default: `_front`"
+        "other": {
+            "title": "Other Options",
+            "type": "object",
+            "fa_icon": "fas fa-list-ul",
+            "properties": {
+                "singularity_cache_dir": {
+                    "type": "string",
+                    "description": "Shared directory where Singularity containers are cached. Default: $shared_work_dir/singularity_cache or $HOME/.singularity_cache",
+                    "fa_icon": "fas fa-folder-open",
+                    "hidden": true
+                },
+                "singularity_user": {
+                    "type": "string",
+                    "fa_icon": "fas fa-user",
+                    "description": "User to use for running Singularity containers. Default: $USER",
+                    "hidden": true,
+                    "help_text": "This is automatically set to `ec2-user` when using the 'tower' profile"
+                },
+                "runtime_opts": {
+                    "type": "string",
+                    "fa_icon": "fas fa-terminal",
+                    "help_text": "Runtime options for Singularity must include mounts for any directory paths you are using. You can also pass the --nv flag here to make use of NVIDIA GPU resources. For example, `--nv -B /your/data/dir -B /your/output/dir`\n",
+                    "description": "Runtime options for the container engine being used (e.g. Singularity or Docker)."
+                },
+                "lsf_opts": {
+                    "type": "string",
+                    "description": "Options for LSF cluster at Janelia, when using the lsf profile.",
+                    "fa_icon": "fas fa-terminal"
+                }
+            },
+            "description": "Other global options affecting all pipelines stages"
         }
     },
-    "required": [
-        "i",
-        "o",
-        "tmp_tracking_dir",
-        "body_axis_lookup_filename",
-        "label_filename",
-        "crop_regression_filename",
-        "model_cache_dirname",
-        "model_name",
-        "calibrations_filename"
+    "allOf": [
+        {
+            "$ref": "#/definitions/data"
+        },
+        {
+            "$ref": "#/definitions/tracking_parameters"
+        }
     ]
 }
