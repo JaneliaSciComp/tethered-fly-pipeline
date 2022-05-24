@@ -30,12 +30,20 @@ def default_params() {
 }
 
 def input_dir_param(Map ps) {
-    def dir = file(ps.i)
+    def input_dir = ps.input_dir
+    if (!input_dir) {
+        input_dir = ps.i
+    }
+    def dir = file(input_dir)
     return "${dir}"
 }
 
 def output_dir_param(Map ps) {
-    def dir = file(ps.o)
+    def output_dir = ps.output_dir
+    if (!output_dir) {
+        output_dir = ps.o
+    }
+    def dir = file(output_dir)
     return "${dir}"
 }
 
