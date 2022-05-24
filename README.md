@@ -70,6 +70,9 @@ export JAVA_HOME=/usr/lib/jvm/jre-17
 You can see full examples with arguments in the [examples](./examples/) folder.
 
 ## User Manual
-Further detailed documentation is available here:
+
+Further documentation is available here:
 
 * [Pipeline Parameters](docs/Parameters.md)
+* [Development](docs/Development.md)
+
