@@ -2,5 +2,4 @@ maru_version: 0.1.1
 name: apt_detect
 version: 1.0.0
 remotes:
-- registry.int.janelia.org/huston/apt_detect
-- public.ecr.aws/janeliascicomp/apt_detect
+- public.ecr.aws/janeliascicomp/huston
