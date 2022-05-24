@@ -1,0 +1,6 @@
+maru_version: 0.1.1
+name: apt_track
+version: 1.0.0
+remotes:
+- registry.int.janelia.org/huston/apt_track
+- public.ecr.aws/janeliascicomp/apt_track
