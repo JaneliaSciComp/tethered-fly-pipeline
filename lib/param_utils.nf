@@ -1,8 +1,7 @@
 def default_params() {
     [
-        apt_containers_repo: 'registry.int.janelia.org/huston',
-        apt_detect_container_version: '1.0',
-        apt_track_container_version: '1.0',
+        apt_detect_container: 'registry.int.janelia.org/huston/apt_detect:1.0',
+        apt_track_container: 'registry.int.janelia.org/huston/apt_track:1.0',
         error_strategy: 'ignore', // the default nextflow strategy use ignore instead of terminate
 
         apt_detect_cpus: 2,
@@ -50,20 +49,4 @@ def output_dir_param(Map ps) {
 def temp_tracking_dir_param(Map ps) {
     def dir = file(ps.tmp_tracking_dir)
     return "${dir}"
-}
-
-def apt_detect_container_param(Map ps) {
-    def apt_detect_container = ps.apt_detect_container
-    if (!apt_detect_container)
-        "${ps.apt_containers_repo}/apt_detect:${ps.apt_detect_container_version}"
-    else
-        apt_detect_container
-}
-
-def apt_track_container_param(Map ps) {
-    def apt_track_container = ps.apt_track_container
-    if (!apt_track_container)
-        "${ps.apt_containers_repo}/apt_track:${ps.apt_track_container_version}"
-    else
-        apt_track_container
 }

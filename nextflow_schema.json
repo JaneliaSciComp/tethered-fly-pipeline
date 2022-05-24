@@ -200,7 +200,7 @@
             "$ref": "#/definitions/data"
         },
         {
-            "$ref": "#/definitions/tracking_parameters"
+            "$ref": "#/definitions/detect_parameters"
         }
     ]
 }
