@@ -99,6 +99,18 @@
             "type": "object",
             "description": "Parameters for the detection step",
             "properties": {
+                "sideview_crop_size": {
+                    "type": "string",
+                    "description": "Default crop size used for **SIDE** view. Only change this if you know how this impacts the algorithm. Default: `230,350`",
+                    "hidden": true,
+                    "fa_icon": "fas fa-crop-alt"
+                },
+                "frontview_crop_size": {
+                    "type": "string",
+                    "description": "Default crop size used for **FRONT** view. Only change this if you know how this impacts the algorithm. Default: `350,350`",
+                    "hidden": true,
+                    "fa_icon": "fas fa-crop-alt"
+                },
                 "apt_detect_cpus": {
                     "type": "string",
                     "fa_icon": "fas fa-microchip",
@@ -117,18 +129,6 @@
             "type": "object",
             "description": "Parameters for the tracking step",
             "properties": {
-                "sideview_crop_size": {
-                    "type": "string",
-                    "description": "Default crop size used for **SIDE** view. Only change this if you know how this impacts the algorithm. Default: `230,350`",
-                    "hidden": true,
-                    "fa_icon": "fas fa-crop-alt"
-                },
-                "frontview_crop_size": {
-                    "type": "string",
-                    "description": "Default crop size used for **FRONT** view. Only change this if you know how this impacts the algorithm. Default: `350,350`",
-                    "hidden": true,
-                    "fa_icon": "fas fa-crop-alt"
-                },
                 "apt_track_cpus": {
                     "type": "string",
                     "fa_icon": "fas fa-microchip",
