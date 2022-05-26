@@ -1,0 +1,16 @@
+{
+    "name": "tower-aws-amis",
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w",
+        "test": "jest",
+        "cdk": "cdk"
+    },
+    "devDependencies": {
+        "@types/node": "^17.0.35",
+        "aws-cdk": "^2.25.0",
+        "aws-cdk-lib": "^2.25.0",
+        "constructs": "^10.1.17",
+        "typescript": "^4.7.2"
+    }
+}

@@ -4,8 +4,6 @@
 *.swp
 # project files
 .vscode
-# binaries
-bin
 # OSX specific files
 .DS_Store
 # NextFlow work files
