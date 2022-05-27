@@ -4,13 +4,24 @@
         "build": "tsc",
         "watch": "tsc -w",
         "test": "jest",
-        "cdk": "cdk"
+        "cdk": "cdk",
+        "deploy": "node scripts/deploy",
+        "destroy": "node scripts/destroy"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/JaneliaSciComp/tethered-fly-pipeline.git"
     },
     "devDependencies": {
         "@types/node": "^17.0.35",
         "aws-cdk": "^2.25.0",
         "aws-cdk-lib": "^2.25.0",
+        "chalk": "~4.1.2",
         "constructs": "^10.1.17",
-        "typescript": "^4.7.2"
+        "dotenv": "^16.0.1",
+        "eslint": "^8.16.0",
+        "prompts": "^2.4.2",
+        "typescript": "^4.7.2",
+        "yargs": "^17.5.1"
     }
 }

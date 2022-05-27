@@ -1,5 +1,4 @@
 import { App, Stack, Tags } from 'aws-cdk-lib'
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { AMIBuilderPipelineStack } from './ami-constructs';
 
 const { AWS_REGION, AWS_ACCOUNT } = process.env;
