@@ -1,9 +1,11 @@
 export interface AMIDeploymentOptions {
-    mountedS3Bucket?: string
+    s3Bucket?: string;
+    fsxVolume?: string;
 }
 
 export function getAMIDeploymentOptions() : AMIDeploymentOptions {
     return {
-        mountedS3Bucket: process.env.AMI_S3_BUCKET
+        s3Bucket: process.env.AMI_S3_BUCKET,
+        fsxVolume: process.env.AMI_FSX_VOLUME,
     };
 }

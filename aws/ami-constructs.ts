@@ -7,9 +7,12 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 
 import { basicPackagesInstaller } from './components/basicPackagesInstaller';
-import { minicondaInstaller } from './components/minicondaInstaller';
+import { awscliInstaller } from './components/awscliInstaller';
 import { AMIDeploymentOptions, getAMIDeploymentOptions } from './ami-options';
-import { s3Mount } from './components/s3Mount';
+import { mountS3 } from './components/mountS3';
+import { mountFSX } from './components/mountFSX';
+import { startDocker } from './components/startDocker';
+import { stopDocker } from './components/stopDocker';
 
 interface ComponentParameter {
     name: string;
@@ -59,22 +62,39 @@ function createRecipe(scope: Construct, deploymentOptions: AMIDeploymentOptions)
     const parentImage = EcsOptimizedImage.amazonLinux2(AmiHardwareType.GPU);
 
 
-    const s3mntComp : ComponentData[] = deploymentOptions.mountedS3Bucket
+    const mntS3Comp : ComponentData[] = deploymentOptions.s3Bucket
         ? [
             {
                 name: 'mountS3Bucket',
                 platform: 'Linux',
                 version: '1.0.0',
-                data: s3Mount,
+                data: mountS3,
                 parameters: [
                     {
                         name: 'BucketName',
-                        value: [ deploymentOptions.mountedS3Bucket ],
+                        value: [ deploymentOptions.s3Bucket ],
                     }
                 ],
             }
           ]
-        : []
+        : [];
+
+    const mntFSXComp : ComponentData[] = deploymentOptions.fsxVolume
+          ? [
+              {
+                  name: 'mountFSX',
+                  platform: 'Linux',
+                  version: '1.0.0',
+                  data: mountFSX,
+                  parameters: [
+                      {
+                          name: 'FSXVolume',
+                          value: [ deploymentOptions.fsxVolume ]
+                      },
+                  ],
+              }
+            ]
+          : [];
 
     const compdata : ComponentData[] = [
         {
@@ -84,16 +104,29 @@ function createRecipe(scope: Construct, deploymentOptions: AMIDeploymentOptions)
             data: basicPackagesInstaller,
         },
         {
-            name: 'minicondaInstaller',
+            name: 'awscliInstaller',
             platform: 'Linux',
             version: '1.0.0',
-            data: minicondaInstaller,
+            data: awscliInstaller,
         },
     ];
 
     const components = createComponents(scope, [
+        {
+            name: 'stopDocker',
+            platform: 'Linux',
+            version: '1.0.0',
+            data: stopDocker,
+        },
         ...compdata,
-        ...s3mntComp,
+        ...mntS3Comp,
+        ...mntFSXComp,
+        {
+            name: 'startDocker',
+            platform: 'Linux',
+            version: '1.0.0',
+            data: startDocker,
+        },
     ]);
 
     const imageId = parentImage.getImage(scope).imageId;
@@ -141,9 +174,9 @@ function createInfrastructure(scope: Construct, deploymentOptions: AMIDeployment
         ],
     });
 
-    if (deploymentOptions.mountedS3Bucket) {
+    if (deploymentOptions.s3Bucket) {
         // bucket must exist
-        const bucket = s3.Bucket.fromBucketName(scope, deploymentOptions.mountedS3Bucket, deploymentOptions.mountedS3Bucket);
+        const bucket = s3.Bucket.fromBucketName(scope, deploymentOptions.s3Bucket, deploymentOptions.s3Bucket);
         bucket.grantReadWrite(imageRole);
     }
     
@@ -154,10 +187,14 @@ function createInfrastructure(scope: Construct, deploymentOptions: AMIDeployment
 
     const infrastructure = new imagebuilder.CfnInfrastructureConfiguration(scope, 'Infrastructure', {
         name: 'Infrastructure',
-        instanceProfileName: profileName,
+        instanceProfileName: instanceProfile.instanceProfileName,
     });
 
     infrastructure.addDependsOn(instanceProfile);
+
+    new CfnOutput(scope, 'GPUBasedInstanceProfile', {
+        value: instanceProfile.instanceProfileName
+    });
 
     return infrastructure;
 }
