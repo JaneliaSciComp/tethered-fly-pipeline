@@ -187,13 +187,13 @@ function createInfrastructure(scope: Construct, deploymentOptions: AMIDeployment
 
     const infrastructure = new imagebuilder.CfnInfrastructureConfiguration(scope, 'Infrastructure', {
         name: 'Infrastructure',
-        instanceProfileName: instanceProfile.instanceProfileName,
+        instanceProfileName: profileName,
     });
 
     infrastructure.addDependsOn(instanceProfile);
 
-    new CfnOutput(scope, 'GPUBasedInstanceProfile', {
-        value: instanceProfile.instanceProfileName
+    new CfnOutput(scope, 'AMIProfile', {
+        value: infrastructure.instanceProfileName
     });
 
     return infrastructure;
