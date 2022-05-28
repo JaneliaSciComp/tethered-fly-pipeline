@@ -9,7 +9,7 @@ phases:
         inputs:
           commands:
             - systemctl start docker
-      - name: StartDocker
+      - name: StopECS
         action: ExecuteBash
         inputs:
           commands:

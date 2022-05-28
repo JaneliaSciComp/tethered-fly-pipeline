@@ -17,6 +17,10 @@ async function deployImageBuilder() {
 
 }
 
+async function createAMI() {
+
+}
+
 // set env from .env file if present
 dotenv.config();
 
