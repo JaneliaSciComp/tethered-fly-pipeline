@@ -10,4 +10,11 @@ phases:
           commands:
             - systemctl stop docker
             - systemctl stop ecs
+      - name: ConfigureECS
+        action: ExecuteBash
+        inputs:
+          commands:
+            - mkdir -p /etc/ecs
+            - echo ECS_IMAGE_PULL_BEHAVIOR=once >> /etc/ecs/ecs.config
+            - echo ECS_ENABLE_AWSLOGS_EXECUTIONROLE_OVERRIDE=true >> /etc/ecs/ecs.config
 `

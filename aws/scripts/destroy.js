@@ -12,7 +12,7 @@ async function removeImageBuilder() {
 
     // remove the AMIBuilder
     console.log(chalk.cyan("🚚 Removing AMI stack"));
-    exec(`npm run cdk -- destroy --all --require-approval never`, {
+    exec(`npm run cdk -- destroy AMIBuilder --require-approval never -f`, {
         cwd: ".",
     });
 
