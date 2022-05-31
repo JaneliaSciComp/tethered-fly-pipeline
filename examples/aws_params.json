@@ -1,0 +1,14 @@
+{
+    "input_dir": "/fusion/s3/janelia-nextflow-demo/goinac-huston-test/fly_4315_to_4320_tdtKir",
+    "output_dir": "/fusion/s3/janelia-nextflow-demo/goinac-huston-test/results",
+    "tmp_tracking_dir": "/fusion/s3/janelia-nextflow-demo/goinac-huston-test/tmp-results",
+    "flydata_dirname_pattern":  "fly4315",
+    "sideview_videoname_pattern": "C001*002_c.avi",
+    "frontview_videoname_pattern": "C002*002_c.avi",
+    "body_axis_lookup_filename":  "/fusion/s3/janelia-nextflow-demo/goinac-huston-test/fly2BodyAxis_lookupTable_Ben.csv",
+    "label_filename":  "/fusion/s3/janelia-nextflow-demo/goinac-huston-test/sh_trn5017_20200121_stripped.lbl",
+    "crop_regression_filename":  "/fusion/s3/janelia-nextflow-demo/goinac-huston-test/crop_regression_params.mat",
+    "model_cache_dirname":  "/fusion/s3/janelia-nextflow-demo/goinac-huston-test/models",
+    "model_name":  "stephen_20200124",
+    "calibrations_filename":  "/fusion/s3/janelia-nextflow-demo/goinac-huston-test/fly2DLT_lookupTableStephen.csv"
+}
