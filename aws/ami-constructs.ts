@@ -51,8 +51,11 @@ export class AMIBuilderPipelineStack extends Stack {
             infrastructureConfigurationArn: infrastructure.attrArn
         });
 
-        new CfnOutput(this, 'AMIPipeline', {
+        new CfnOutput(this, 'AMIPipelineName', {
             value: pipeline.attrName
+        });
+        new CfnOutput(this, 'AMIPipelineARN', {
+            value: pipeline.attrArn
         });
     }
 
@@ -130,10 +133,6 @@ function createRecipe(scope: Construct, deploymentOptions: AMIDeploymentOptions)
     ]);
 
     const imageId = parentImage.getImage(scope).imageId;
-
-    new CfnOutput(scope, 'ParentImageId', {
-        value: imageId
-    });
 
     return new imagebuilder.CfnImageRecipe(scope, 'AMIRecipe', {
         name: 'amiGPURecipe',
