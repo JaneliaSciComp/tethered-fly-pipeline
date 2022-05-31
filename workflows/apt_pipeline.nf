@@ -19,6 +19,13 @@ workflow apt_pipeline {
 
     main:
     def apt_inputs = GET_SAMPLE_DIRS(input_dir)
+    | filter { 
+        def res = it != 'null'
+        if (!res) {
+            log.warn "No fly data directory found! Check the input_dir and/or flydata_maxdepth_search parameters"
+        }
+        res
+    }
     | flatMap { it.split('\s+') }
     | map {
         def fly = file(it).name

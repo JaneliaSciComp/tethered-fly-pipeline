@@ -18,7 +18,13 @@ process GET_SAMPLE_DIRS {
     env(fly_dirs)
 
     script:
+    def maxdepth_arg = params.flydata_maxdepth_search > 0
+        ? "-maxdepth ${params.flydata_maxdepth_search}"
+        : ""
     """
-    fly_dirs=`find "${data_dirname}" -regex ".*/${params.flydata_dirname_pattern}"`
+    fly_dirs=`find ${data_dirname} ${maxdepth_arg} -regex ".*/${params.flydata_dirname_pattern}"`
+    if [[ -z \${fly_dirs} ]] ; then
+        fly_dirs=null
+    fi
     """    
 }

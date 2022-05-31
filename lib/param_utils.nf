@@ -13,6 +13,7 @@ def default_params() {
         force_detect: false,
         force_track: false,
         flydata_dirname_pattern: 'fly[0-9]*',
+        flydata_maxdepth_search: 0,
         sideview_crop_size: '230,350',
         sideview_videoname_pattern: 'C001*.avi',
         sideview_detect_result_suffix: '_side',

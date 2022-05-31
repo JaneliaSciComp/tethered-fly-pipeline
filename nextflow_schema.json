@@ -60,6 +60,11 @@
                     "description": "Regex pattern for selecting the fly directories. This can be used for running the pipeline only for one or two flies for example: `fly123[4,8]` - selects only `fly1234` and `fly1238` as inputs. Default: `fly[0-9]*`",
                     "fa_icon": "fas fa-star-of-life"
                 },
+                "flydata_maxdepth_search": {
+                    "type": "integer",
+                    "description": "If greater than 0 it specifies how many levels to look for flydata directories under input_dir. Default: `0` (unlimitted)",
+                    "fa_icon": "fas fa-square"
+                },
                 "sideview_videoname_pattern": {
                     "type": "string",
                     "description": "Filename pattern for **SIDE** view videos. Changing this may require settting `frontview_videoname_pattern` so that we process the side and front view in pairs. Default: `C001*.avi`",
