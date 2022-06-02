@@ -346,7 +346,7 @@ def _process_movie(movie_filename, view, flydata, crop_size,
                             gzip_compression_level=0)
         print('Move', tmpresname, '->', resname)
         os.rename(tmpresname, resname)
-    else
+    else:
         hdf5storage.savemat(resname, {'locs': predLocs,
                                     'scores': predScores,
                                     'expname': movie_filename,
