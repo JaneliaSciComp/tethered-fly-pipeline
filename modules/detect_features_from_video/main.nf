@@ -9,6 +9,7 @@ process DETECT_FEATURES_FROM_VIDEO {
         [video_filename, 1],
         [output_dirname, 3],
         [params.model_cache_dirname, 0],
+        [params.scratch_dir, 0],
         [params.body_axis_lookup_filename, 1],
         [params.label_filename, 1],
         [params.crop_regression_filename, 1],
