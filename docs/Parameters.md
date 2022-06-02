@@ -11,6 +11,7 @@ Filepaths to directories and files used for input and output
 | `input_dir` | Top level directory for experiment containing all individual fly subdirectories | `string` |
 | `output_dir` | Directory where final results `.trk`, `_3dres.mat` will be generated. The per fly and per video results will be generated in the corresponding subfolders as found in the input, e.g., `.../fly4315/C001H001S0002/C001H001S0002_c.trk` | `string` |
 | `tmp_tracking_dir` | Directory containing the intermediate results generated during the `detect` step | `string` |
+| `scratch_dir` | Temp scratch directory for holding results before moving them to final destination | `string` |
 | `label_filename` | e.g. `/groups/branson/bransonlab/apt/experiments/data/sh_trn5017_20200121_stripped.lbl` | `string` |
 | `body_axis_lookup_filename` | .csv file containing fly numbers with the corresponding body axis .lbl files e.g. `/groups/huston/hustonlab/flp-chrimson_experiments/fly2BodyAxis_lookupTable_Ben.csv` | `string` |
 | `crop_regression_filename` | e.g. `/groups/branson/bransonlab/mayank/stephen_copy/crop_regression_params.mat` | `string` |
@@ -18,6 +19,7 @@ Filepaths to directories and files used for input and output
 | `calibrations_filename` | .csv file containing fly numbers with the corresponding calibration files | `string` |
 | `model_cache_dirname` | `/groups/branson/bransonlab/mayank/stephen_copy/apt_cache` | `string` |
 | `flydata_dirname_pattern` | Regex pattern for selecting the fly directories. This can be used for running the pipeline only for one or two flies for example: `fly123[4,8]` - selects only `fly1234` and `fly1238` as inputs. Default: `fly[0-9]*` | `string` |
+| `flydata_maxdepth_search` | If greater than 0 it specifies how many levels to look for flydata directories under input_dir. Default: `0` (unlimitted) | `integer` |
 | `sideview_videoname_pattern` | Filename pattern for **SIDE** view videos. Changing this may require settting `frontview_videoname_pattern` so that we process the side and front view in pairs. Default: `C001*.avi` | `string` |
 | `frontview_videoname_pattern` | Filename pattern for **FRONT** view videos. Changing this may require settting `sideview_videoname_pattern` so that we process the side and front view in pairs.  Default: `C002*.avi` | `string` |
 | `sideview_detect_result_suffix` | Filename suffix used for **SIDE** view intermediated results. Default: `_side` | `string` |
@@ -29,6 +31,8 @@ Parameters for the detection step
 
 | Parameter | Description | Type |
 |-----------|-----------|-----------|
+| `sideview_crop_size` | Default crop size used for **SIDE** view. Only change this if you know how this impacts the algorithm. Default: `230,350` | `string` |
+| `frontview_crop_size` | Default crop size used for **FRONT** view. Only change this if you know how this impacts the algorithm. Default: `350,350` | `string` |
 | `apt_detect_cpus` | Number of CPU cores for detection. Default: 2 | `string` |
 | `apt_detect_memory` | Amount of memory for detection. Default: 30 G | `string` |
 
@@ -38,8 +42,6 @@ Parameters for the tracking step
 
 | Parameter | Description | Type |
 |-----------|-----------|-----------|
-| `sideview_crop_size` | Default crop size used for **SIDE** view. Only change this if you know how this impacts the algorithm. Default: `230,350` | `string` |
-| `frontview_crop_size` | Default crop size used for **FRONT** view. Only change this if you know how this impacts the algorithm. Default: `350,350` | `string` |
 | `apt_track_cpus` | Number of CPU cores for tracking. Default: 3 | `string` |
 | `apt_track_memory` | Amount of memory for tracking. Default: 45 G | `string` |
 
