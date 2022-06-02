@@ -25,6 +25,11 @@
                     "description": "Directory containing the intermediate results generated during the `detect` step",
                     "fa_icon": "fas fa-folder"
                 },
+                "scratch_dir": {
+                    "type": "string",
+                    "description": "Temp scratch directory for holding results before moving them to final destination",
+                    "fa_icon": "fas fa-folder"
+                },
                 "label_filename": {
                     "type": "string",
                     "description": "e.g. `/groups/branson/bransonlab/apt/experiments/data/sh_trn5017_20200121_stripped.lbl`",

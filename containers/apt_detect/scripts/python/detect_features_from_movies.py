@@ -306,7 +306,7 @@ def _load_model(lbl_file, view, model_type, model_dir, model_name):
 def _process_movie(movie_filename, view, flydata, crop_size,
                    conf, model_type, model_file, pred_fn,
                    outdir,
-                   force=True):
+                   tmpoutdir=None, force=True):
     mname, _ = os.path.splitext(os.path.basename(movie_filename))
     oname = re.sub('!', '__', _getexpname(movie_filename))
     pname = os.path.join(outdir, oname + '_' + view._name())
@@ -330,17 +330,34 @@ def _process_movie(movie_filename, view, flydata, crop_size,
     except KeyError:
         print('Error classifying', movie_filename)
         return None
-    hdf5storage.savemat(resname, {'locs': predLocs,
-                                  'scores': predScores,
-                                  'expname': movie_filename,
-                                  'crop_loc': crop_loc_all,
-                                  'model_file': model_file,
-                                  'ulocs': pred_ulocs,
-                                  'pred_conf': pred_conf
-                                  },
-                        appendmat=False,
-                        truncate_existing=True,
-                        gzip_compression_level=0)
+
+    if tmpoutdir is not None:
+        tmpresname = os.path.join(outdir, oname + '_' + view._name() + '.mat')
+        hdf5storage.savemat(tmpresname, {'locs': predLocs,
+                                        'scores': predScores,
+                                        'expname': movie_filename,
+                                        'crop_loc': crop_loc_all,
+                                        'model_file': model_file,
+                                        'ulocs': pred_ulocs,
+                                        'pred_conf': pred_conf
+                                        },
+                            appendmat=False,
+                            truncate_existing=True,
+                            gzip_compression_level=0)
+        print('Move', tmpresname, '->', resname)
+        os.rename(tmpresname, resname)
+    else
+        hdf5storage.savemat(resname, {'locs': predLocs,
+                                    'scores': predScores,
+                                    'expname': movie_filename,
+                                    'crop_loc': crop_loc_all,
+                                    'model_file': model_file,
+                                    'ulocs': pred_ulocs,
+                                    'pred_conf': pred_conf
+                                    },
+                            appendmat=False,
+                            truncate_existing=True,
+                            gzip_compression_level=0)
     del predScores, predLocs
     return resname
 
@@ -399,6 +416,8 @@ def main(argv):
     parser.add_argument("-n", dest="model_name",
                         help="model name",
                         default="latest")
+    parser.add_argument("-tmp_outdir", dest="tmpoutdir",
+                        help="Write result to this temporary dir")
     parser.add_argument("-o", dest="outdir",
                         help="temporary output directory to store intermediate computations",
                         required=True)
@@ -435,6 +454,7 @@ def main(argv):
                            view_crop_size, conf,
                            args.model_type, model_file, pred_fn,
                            outdir,
+                           tmpoutdir=args.tmpoutdir,
                            force=args.redo)
 
 

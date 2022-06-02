@@ -25,7 +25,8 @@ def default_params() {
         crop_regression_filename: '',
         model_cache_dirname: '',
         model_name: '',
-        calibrations_filename: ''
+        calibrations_filename: '',
+        scratch_dir: '',
     ]
 }
 
@@ -44,6 +45,15 @@ def output_dir_param(Map ps) {
         output_dir = ps.o
     }
     def dir = file(output_dir)
+    return "${dir}"
+}
+
+def scratch_dir_param(Map ps) {
+    def scratch_dir = ps.scratch_dir
+    if (!scratch_dir) {
+        return ''
+    }
+    def dir = file(scratch_dir)
     return "${dir}"
 }
 
