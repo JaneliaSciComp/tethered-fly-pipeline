@@ -1,8 +1,8 @@
 def create_container_options(dirList) {
     def dirs = dirList
-                .filter {
+                .findAll {
                     def (f, levels_up) = it
-                    f ? true : false
+                    f
                 }
                 .collect {
                     def (f, levels_up) = it
