@@ -17,6 +17,7 @@ import tensorflow as tf
 
 from cvc import cvc
 from enum import Enum
+from pathlib import Path
 
 
 class _View(Enum):
@@ -332,7 +333,8 @@ def _process_movie(movie_filename, view, flydata, crop_size,
         return None
 
     if tmpoutdir is not None:
-        tmpresname = os.path.join(outdir, oname + '_' + view._name() + '.mat')
+        Path(tmpoutdir).mkdir(parents=True, exist_ok=True)
+        tmpresname = os.path.join(tmpoutdir, oname + '_' + view._name() + '.mat')
         hdf5storage.savemat(tmpresname, {'locs': predLocs,
                                         'scores': predScores,
                                         'expname': movie_filename,
