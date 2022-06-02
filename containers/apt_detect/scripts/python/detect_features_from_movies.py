@@ -11,6 +11,7 @@ import numpy as np
 import os
 import re
 import sys
+import shutil
 import tarfile
 import tempfile
 import tensorflow as tf
@@ -347,7 +348,7 @@ def _process_movie(movie_filename, view, flydata, crop_size,
                             truncate_existing=True,
                             gzip_compression_level=0)
         print('Move', tmpresname, '->', resname)
-        os.rename(tmpresname, resname)
+        shutil.move(tmpresname, resname)
     else:
         hdf5storage.savemat(resname, {'locs': predLocs,
                                     'scores': predScores,
