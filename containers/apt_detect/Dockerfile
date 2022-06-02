@@ -40,7 +40,6 @@ RUN conda config --set always_yes yes --set changeps1 no && \
 RUN conda install -c conda-forge opencv=3.4.4
 
 RUN conda install -c conda-forge \
-        hdf5storage=0.1.15 \
         imageio=2.5.0 \
         scikit-image=0.15.0 \
         matplotlib=3.0.3 \
@@ -56,7 +55,9 @@ RUN conda install -c conda-forge \
     keras-gpu=2.2.4
 
 RUN pip install --upgrade pip && \
-    pip install opencv-python
+    pip install \
+        opencv-python \
+        hdf5storage==0.1.18
 
 # Checkout and build the code
 WORKDIR /code/apt

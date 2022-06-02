@@ -1,5 +1,9 @@
 def create_container_options(dirList) {
     def dirs = dirList
+                .findAll {
+                    def (f, levels_up) = it
+                    f
+                }
                 .collect {
                     def (f, levels_up) = it
                     get_parent(f, levels_up)

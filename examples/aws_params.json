@@ -2,6 +2,7 @@
     "input_dir": "/fusion/s3/janelia-nextflow-demo/goinac-huston-test/fly_4315_to_4320_tdtKir",
     "output_dir": "/fusion/s3/janelia-nextflow-demo/goinac-huston-test/results",
     "tmp_tracking_dir": "/fusion/s3/janelia-nextflow-demo/goinac-huston-test/tmp-results",
+    "scratch_dir": "/tmp/detect",
     "flydata_dirname_pattern": "fly4315",
     "flydata_maxdepth_search": 1,
     "sideview_videoname_pattern": "C001*002_c.avi",

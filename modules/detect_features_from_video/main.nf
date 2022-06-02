@@ -9,6 +9,7 @@ process DETECT_FEATURES_FROM_VIDEO {
         [video_filename, 1],
         [output_dirname, 3],
         [params.model_cache_dirname, 0],
+        [params.scratch_dir, 0],
         [params.body_axis_lookup_filename, 1],
         [params.label_filename, 1],
         [params.crop_regression_filename, 1],
@@ -36,7 +37,9 @@ process DETECT_FEATURES_FROM_VIDEO {
     }
 
     def force_detect_flag = params.force_detect ? '-r' : ''
-
+    def scratch_dir_arg = params.scratch_dir 
+        ? "-tmp_outdir ${params.scratch_dir}"
+        : ''
     """
     ${check_block}
     umask 0002
@@ -53,6 +56,7 @@ process DETECT_FEATURES_FROM_VIDEO {
         -crop_reg_file ${params.crop_regression_filename} \
         -view_crop_size "${view_crop_size}" \
         -cache_dir "${params.model_cache_dirname}" \
+        ${scratch_dir_arg} \
         -n "${params.model_name}" \
         -o "${output_dirname}"
     """    

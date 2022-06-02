@@ -9,24 +9,15 @@ phases:
         action: ExecuteBash
         inputs:
           commands:
-            # Download and install miniconda
+            # Download and install miniconda in ec2-user's home dir
             - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda-install.sh
-            - bash miniconda-install.sh -b -f -p /opt/miniconda
+            - mkdir -p /home/ec2-user
+            - bash miniconda-install.sh -b -f -p /home/ec2-user/miniconda
             - rm miniconda-install.sh
-      # Set miniconda path
-      - name: SetMinicondaPath
-        action: ExecuteBash
-        inputs:
-          commands:
-            - |
-              cat > /etc/profile.d/less.sh <<EOF
-              export PATH=$PATH:/opt/miniconda/bin
-              EOF
       # Install awscli
       - name: InstallAWSCLI
         action: ExecuteBash
         inputs:
           commands:
-            - /opt/miniconda/bin/conda install -c conda-forge -y awscli
-            - ln -s /opt/miniconda/bin/aws /usr/bin/aws
+            - /home/ec2-user/miniconda/bin/conda install -c conda-forge -y awscli
 `

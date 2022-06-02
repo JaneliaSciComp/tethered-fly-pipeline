@@ -9,10 +9,4 @@ phases:
         inputs:
           commands:
             - systemctl start docker
-      - name: StopECS
-        action: ExecuteBash
-        inputs:
-          commands:
-            - systemctl stop ecs
-            - rm -rf /var/lib/ecs/data/agent.db
 `

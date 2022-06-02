@@ -6,6 +6,10 @@ parameters:
   - BucketName:
       type: string
       description: BucketName to be mounted.
+  - S3BaseMountedDir
+      type: string
+      default: /fusion/s3
+      description: Parent directory where the S3 bucket will get mounted
 phases:
   - name: build
     steps:
@@ -13,7 +17,7 @@ phases:
         action: ExecuteBash
         inputs:
           commands:
-            - mkdir -p /fusion/s3/{{BucketName}}
-            - echo -e "{{BucketName}}\\t/fusion/s3/{{BucketName}}\\tfuse.s3fs\\trw,_netdev,iam_role=auto,allow_other,umask=0000\\t0\\t0" | tee -a /etc/fstab
-            - mount -t fuse.s3fs "/fusion/s3/{{BucketName}}"
+            - mkdir -p {{S3BaseMountedDir}}/{{BucketName}}
+            - echo -e "{{BucketName}}\\t{{S3BaseMountedDir}}/{{BucketName}}\\tfuse.s3fs\\trw,_netdev,iam_role=auto,allow_other,umask=0000\\t0\\t0" | tee -a /etc/fstab
+            - mount -t fuse.s3fs {{S3BaseMountedDir}}/{{BucketName}}
 `

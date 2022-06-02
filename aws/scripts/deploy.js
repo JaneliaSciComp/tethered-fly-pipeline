@@ -31,7 +31,7 @@ async function getImageBuilderPipeline() {
     amiBuilderStack.Stacks[0].Outputs.forEach(({ OutputKey, OutputValue }) => {
         outputs[OutputKey] = OutputValue;
     });
-  
+
     console.log('AMI Builder Stack outputs:', outputs);
 
     return outputs['AMIPipelineARN'];
@@ -47,27 +47,52 @@ async function createAMI() {
     }).promise();
 }
 
+function checkEnv() {
+    console.log(chalk.cyan("🔎 Checking environment."));
+
+    const expectedEnvVars = [
+        "AWS_ACCOUNT",
+        "AWS_REGION",
+    ];
+
+    let missingVarsCount = 0;
+
+    expectedEnvVars.forEach((envVar) => {
+        if (!process.env[envVar]) {
+            console.log(chalk.red(`🚨 Environment variable ${envVar} was not set.`));
+            missingVarsCount += 1;
+        }
+    });
+
+    if (missingVarsCount > 0) {
+        process.exit(1);
+    }
+
+    console.log(chalk.green("✅ environment looks good."));
+}
+
 // set env from .env file if present
 dotenv.config();
 const { AWS_REGION } = process.env;
 
 const argv = require('yargs/yargs')(process.argv.slice(2))
-  .usage('$0 [options]')
-  .option('d', {
-    alias: 'deploy',
-    type: 'boolean',
-    describe: 'Deploy the AMI builder stack',
-  })
-  .option('c', {
-    alias: 'create-ami',
-    type: 'boolean',
-    describe: 'Run the AMI builder pipeline and create an AMI instance',
-  })
-  .argv;
+    .usage('$0 [options]')
+    .option('d', {
+        alias: 'deploy',
+        type: 'boolean',
+        describe: 'Deploy the AMI builder stack',
+    })
+    .option('c', {
+        alias: 'create-ami',
+        type: 'boolean',
+        describe: 'Run the AMI builder pipeline and create an AMI instance',
+    })
+    .argv;
 
 
 (async () => {
 
+    checkEnv();
     if (argv.deploy) {
         deployImageBuilder();
     }

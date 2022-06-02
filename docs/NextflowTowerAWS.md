@@ -12,6 +12,8 @@ Here are some hints for the values that we found works for this pipeline:
 
 ![Screen of creating an AWS compute environment](images/compute_env_aws.png)
 
+To create the AMI for AWS follow [these instructions](CreateBaseComputeAMI.md)
+
 ## Adding the pipeline
 
 Once you have a compute environment (with Status "AVAILABLE"), you can add the pipeline to it. In the *Launchpad* tab, click **New pipeline** and fill in these values (using the compute environment you just created):

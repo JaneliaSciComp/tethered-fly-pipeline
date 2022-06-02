@@ -6,6 +6,7 @@ include {
     default_params;
     input_dir_param;
     output_dir_param;
+    scratch_dir_param;
     temp_tracking_dir_param;
 } from './lib/param_utils'
 
@@ -15,6 +16,7 @@ process_params = main_params +
         input_dir: input_dir_param(main_params),
         output_dir: output_dir_param(main_params),
         temp_tracking_dir: temp_tracking_dir_param(main_params),
+        scratch_dir: scratch_dir_param(main_params),
     ]
 
 include {
