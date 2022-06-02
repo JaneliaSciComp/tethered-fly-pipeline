@@ -13,6 +13,7 @@ import { mountS3 } from './components/mountS3';
 import { mountFSX } from './components/mountFSX';
 import { startDocker } from './components/startDocker';
 import { stopDocker } from './components/stopDocker';
+import { createHostsEntry } from './components/createHostsEntry';
 
 interface ComponentParameter {
     name: string;
@@ -45,8 +46,8 @@ export class AMIBuilderPipelineStack extends Stack {
 
         const infrastructure = createInfrastructure(this, deploymentOptions);
 
-        const pipeline = new imagebuilder.CfnImagePipeline(this, 'GPUAMIPipeline', {
-            name: 'GPUAMIPipeline',
+        const pipeline = new imagebuilder.CfnImagePipeline(this, 'AMIBuilderPipeline', {
+            name: 'AMIBuilderPipeline',
             imageRecipeArn: imageRecipe.attrArn,
             infrastructureConfigurationArn: infrastructure.attrArn
         });
@@ -76,9 +77,9 @@ function createRecipe(scope: Construct, deploymentOptions: AMIDeploymentOptions)
                     {
                         name: 'BucketName',
                         value: [ deploymentOptions.s3Bucket ],
-                    }
+                    },
                 ],
-            }
+            },
           ]
         : [];
 
@@ -92,13 +93,29 @@ function createRecipe(scope: Construct, deploymentOptions: AMIDeploymentOptions)
                   parameters: [
                       {
                           name: 'FSXVolume',
-                          value: [ deploymentOptions.fsxVolume ]
+                          value: [ deploymentOptions.fsxVolume ],
                       },
                   ],
-              }
+              },
             ]
           : [];
 
+    const refHostEntry : ComponentData[] = deploymentOptions.etcHostsEntry
+            ? [
+                {
+                    name: 'createEtcHostsEntry',
+                    platform: 'Linux',
+                    version: '1.0.0',
+                    data: createHostsEntry,
+                    parameters: [
+                        {
+                            name: 'HostEntry',
+                            value: [ deploymentOptions.etcHostsEntry ],
+                        },
+                    ],
+                },
+              ]
+            : [];
     const compdata : ComponentData[] = [
         {
             name: 'basicPackagesInstaller',
@@ -115,15 +132,16 @@ function createRecipe(scope: Construct, deploymentOptions: AMIDeploymentOptions)
     ];
 
     const components = createComponents(scope, [
+        ...compdata,
+        ...refHostEntry,
+        ...mntS3Comp,
+        ...mntFSXComp,
         {
             name: 'stopDocker',
             platform: 'Linux',
             version: '1.0.0',
             data: stopDocker,
         },
-        ...compdata,
-        ...mntS3Comp,
-        ...mntFSXComp,
         {
             name: 'startDocker',
             platform: 'Linux',
@@ -135,7 +153,7 @@ function createRecipe(scope: Construct, deploymentOptions: AMIDeploymentOptions)
     const imageId = parentImage.getImage(scope).imageId;
 
     return new imagebuilder.CfnImageRecipe(scope, 'AMIRecipe', {
-        name: 'amiGPURecipe',
+        name: 'amiRecipe',
         version: '1.0.0',
         parentImage: imageId,
         components: components.map(c => {
@@ -160,8 +178,8 @@ function createComponents(scope: Construct, compdata: ComponentData[]): Componen
 
 function createInfrastructure(scope: Construct, deploymentOptions: AMIDeploymentOptions): imagebuilder.CfnInfrastructureConfiguration {
     // create a Role for the EC2 Instance
-    const roleName = 'GPUImageRole';
-    const profileName = 'GPUBasedInstanceProfile';
+    const roleName = 'AMIImageBuilerRole';
+    const profileName = 'AMIBuilderInstanceProfile';
 
     const imageRole = new iam.Role(scope, 'ImageRole', {
         roleName: roleName,
@@ -179,7 +197,7 @@ function createInfrastructure(scope: Construct, deploymentOptions: AMIDeployment
         bucket.grantReadWrite(imageRole);
     }
     
-    const instanceProfile = new iam.CfnInstanceProfile(scope, 'GPUBasedInstanceProfile', {
+    const instanceProfile = new iam.CfnInstanceProfile(scope, 'AMIBuilderInstanceProfile', {
         instanceProfileName: profileName,
         roles: [imageRole.roleName]
     });

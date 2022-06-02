@@ -6,6 +6,10 @@ parameters:
   - FSXVolume:
       type: string
       description: FSX volume to be mounted.
+  - FSXMountedDir:
+      type: string
+      default: /fsx
+      description: Mounted directory for FSX volume
 phases:
   - name: build
     steps:
@@ -13,9 +17,8 @@ phases:
         action: ExecuteBash
         inputs:
           commands:
-            - amazon-linux-extras install -y lustre2.10
-            - mkdir -p /fsx
-            - echo -e '{{FSXVolume}}\\t/fsx\\tlustre\\trw,_netdev,noatime,flock\\t0\\t0' | sudo tee -a /etc/fstab
-            - mount -t lustre /fsx
-            - chown ec2-user:ec2-user /fsx
+            - mkdir -p {{FSXMountedDir}}
+            - echo -e '{{FSXVolume}}\\t{{FSXMountedDir}}\\tlustre\\trw,_netdev,noatime,flock\\t0\\t0' | sudo tee -a /etc/fstab
+            - mount -t lustre {{FSXMountedDir}}
+            - chown ec2-user:ec2-user {{FSXMountedDir}}
 `
