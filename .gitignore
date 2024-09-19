@@ -10,4 +10,4 @@
 work
 .nextflow*
 # local files
-local
+mylocal
