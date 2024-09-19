@@ -1,12 +1,12 @@
-# Running on AWS using Nextflow Tower
+# Running on AWS using Seqera Platform
 
-A public demonstration version of Tower is available at [tower.nf](https://tower.nf) and can be used to execute the pipeline on any cloud provider.
+A public demonstration version of Seqera Platform is available at [cloud.seqera.io](https://cloud.seqera.io) and can be used to execute the pipeline on any cloud provider.
 
-The first time you log in, your account request will need to be approved manually by the Nextflow team. Once you get an email about your account being activated, you'll be able to log in again and run the pipeline.
+The first time you log in, your account request will need to be approved manually by the Seqera team. Once you get an email about your account being activated, you'll be able to log in again and run the pipeline.
 
 ## Creating a Compute Environment
 
-You will first need to create a compute environment in Tower to describe your compute resources. Use the "Tower Forge" method to automatically create the required resources. The official documentation provides [detailed instructions](https://help.tower.nf/compute-envs/aws-batch/#forge-aws-resources) to set this up. As part of this process, make sure to create an S3 Bucket for your data.
+You will first need to create a compute environment in Tower to describe your compute resources. Use the "Tower Forge" method to automatically create the required resources. The official documentation provides [detailed instructions](https://docs.seqera.io/platform/24.1/compute-envs/aws-batch) to set this up. As part of this process, make sure to create an S3 Bucket for your data.
 
 Here are some hints for the values that we found works for this pipeline:
 
