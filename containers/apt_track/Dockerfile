@@ -1,10 +1,15 @@
-FROM oraclelinux:8
+FROM oraclelinux:9
+
+ARG TARGETPLATFORM
 
 LABEL org.opencontainers.image.licenses="BSD-3-Clause"
 
 RUN yum install -y \
         wget unzip \
         libXt libXext libXmu libXrender libXcomposite
+
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=all
 
 # install Matlab-2019a
 WORKDIR /mcr-install
@@ -22,8 +27,7 @@ ENV LD_LIBRARY_PATH=\
 /usr/local/MATLAB/MATLAB_Runtime/v96/sys/os/glnxa64:\
 /usr/local/MATLAB/MATLAB_Runtime/v96/sys/opengl/lib/glnxa64:\
 /usr/local/MATLAB/MATLAB_Runtime/v96/sys/java/jre/glnxa64/jre/lib/amd64/server:\
-/usr/local/MATLAB/MATLAB_Runtime/v96/sys/java/jre/glnxa64/jre/lib/amd64:\
-${LD_LIBRARY_PATH}
+/usr/local/MATLAB/MATLAB_Runtime/v96/sys/java/jre/glnxa64/jre/lib/amd64
 
 COPY bin /app/bin
 COPY scripts/entrypoint.sh /app

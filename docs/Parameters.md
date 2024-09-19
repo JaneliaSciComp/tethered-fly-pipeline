@@ -51,8 +51,8 @@ Customize the Docker containers used for each pipeline step
 
 | Parameter | Description | Type |
 |-----------|-----------|-----------|
-| `apt_detect_container` | Docker container for running detect using APT. Default: `registry.int.janelia.org/huston/apt_detect:1.0` | `string` |
-| `apt_track_container` | Docker container for running tracking using APT. Default: `registry.int.janelia.org/huston/apt_track:1.0` | `string` |
+| `apt_detect_container` | Docker container for running detect using APT. Default: `public.ecr.aws/janeliascicomp/huston/apt_detect:1.1.0` | `string` |
+| `apt_track_container` | Docker container for running tracking using APT. Default: `public.ecr.aws/janeliascicomp/huston/apt_track:1.1.0` | `string` |
 
 ## Other Options
 
