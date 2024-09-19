@@ -45,6 +45,7 @@ process DETECT_FEATURES_FROM_VIDEO {
     umask 0002
 
     mkdir -p "${output_dirname}"
+    echo "Created output dir: ${output_dirname}"
 
     cd /code/apt/deepnet
     python detect_features_from_movies.py \
