@@ -11,5 +11,6 @@
     "crop_regression_filename":  "/groups/branson/bransonlab/mayank/stephen_copy/crop_regression_params.mat",
     "model_cache_dirname":  "/groups/branson/bransonlab/mayank/stephen_copy/apt_cache",
     "model_name":  "stephen_20200124",
-    "calibrations_filename":  "/nrs/scicompsoft/goinac/huston/data/fly2DLT_lookupTableStephen.csv"
+    "calibrations_filename":  "/nrs/scicompsoft/goinac/huston/data/fly2DLT_lookupTableStephen.csv",
+    "runtime_opts": "-B /nrs/scicompsoft/goinac -B /groups/branson/bransonlab"
 }
