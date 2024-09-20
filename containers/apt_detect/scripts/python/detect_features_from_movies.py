@@ -284,7 +284,7 @@ def _gpu_info():
 
 def _load_model(lbl_file, view, model_type, model_dir, model_name):
     print('Load model', lbl_file, model_dir, model_name)
-    tf.reset_default_graph()
+    tf.compat.v1.reset_default_graph()
     conf = apt.create_conf(lbl_file,
                            view=view,
                            name=model_name,

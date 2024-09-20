@@ -40,20 +40,20 @@ RUN mamba install -c conda-forge \
         pip \
         future \
         easydict=1.9 \
-        numpy=1.19.5 \
+        numpy=1.21.6 \
         keras=2.2.4
-
-RUN pip install \
-        scikit-image==0.18.3 \
-        matplotlib==3.0.3 \
-        opencv-python \
-        hdf5storage==0.1.18
 
 # these 2 packages require anaconda channel
 # tensorflow=1.14 is available on conda-forge but the corresponding tensorflow-gpu isn't
 RUN mamba install -c anaconda \
         tensorflow=1.15 \
         tensorflow-gpu=1.15
+
+RUN pip install \
+        scikit-image==0.18.3 \
+        matplotlib==3.0.3 \
+        opencv-python \
+        hdf5storage==0.1.18
 
 # Checkout and build the code
 WORKDIR /code/apt
