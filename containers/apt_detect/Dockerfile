@@ -55,6 +55,10 @@ RUN pip install \
         opencv-python \
         hdf5storage==0.1.18
 
+RUN mamba install -c conda-forge \
+        hdf5=1.10.5 \
+        h5py=2.9.0
+
 # Checkout and build the code
 WORKDIR /code/apt
 RUN git clone --branch stephen_working --depth 1 https://github.com/kristinbranson/APT.git .
