@@ -336,16 +336,19 @@ def _process_movie(movie_filename, view, flydata, crop_size,
     if tmpoutdir is not None:
         Path(tmpoutdir).mkdir(parents=True, exist_ok=True)
         tmpresname = os.path.join(tmpoutdir, oname + '_' + view._name() + '.mat')
-        hdf5storage.savemat(tmpresname, {'locs': predLocs,
-                                        'scores': predScores,
-                                        'expname': movie_filename,
-                                        'crop_loc': crop_loc_all,
-                                        'model_file': model_file,
-                                        'ulocs': pred_ulocs,
-                                        'pred_conf': pred_conf
-                                        },
+        hdf5storage.savemat(tmpresname,
+                            {'locs': predLocs,
+                             'scores': predScores,
+                             'expname': movie_filename,
+                             'crop_loc': crop_loc_all,
+                             'model_file': model_file,
+                             'ulocs': pred_ulocs,
+                             'pred_conf': pred_conf
+                            },
                             appendmat=False,
+                            format='7.3',
                             truncate_existing=True,
+                            compression_algorithm='gzip',
                             gzip_compression_level=0)
         print('Move', tmpresname, '->', resname)
         shutil.move(tmpresname, resname)

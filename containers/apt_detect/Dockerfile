@@ -53,10 +53,10 @@ RUN pip install \
         scikit-image==0.18.3 \
         matplotlib==3.0.3 \
         opencv-python \
-        hdf5storage==0.1.18
+        hdf5storage==0.1.19
 
 RUN mamba install -c conda-forge \
-        hdf5=1.10.5 \
+        hdf5=1.10.4 \
         h5py=2.9.0
 
 # Checkout and build the code
