@@ -1,7 +1,7 @@
 def default_params() {
     [
         apt_detect_container: 'public.ecr.aws/janeliascicomp/huston/apt_detect:1.1.0',
-        apt_track_container: 'public.ecr.aws/janeliascicomp/huston/apt_track:1.1.0',
+        apt_track_container: 'public.ecr.aws/janeliascicomp/huston/apt_track:1.0.0',
         error_strategy: 'ignore', // the default nextflow strategy use ignore instead of terminate
 
         apt_detect_cpus: 2,
