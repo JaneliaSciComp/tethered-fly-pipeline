@@ -6,19 +6,21 @@ include {
     DETECT_FEATURES_FROM_VIDEO;
 } from '../modules/detect_features_from_video/main'
 
-workflow detect_pipeline {
+workflow DETECT_PIPELINE {
     take:
     inputs
     outputs
     view_type
     video_name_pattern
     view_crop_size
+    collection_file,
     result_suffix
 
     main:
     def detect_process_inputs = CREATE_VIDEO_LIST(
         inputs,
-        video_name_pattern
+        video_name_pattern,
+        collection_file,
     )
     | flatMap {
         def (flyname, videos_list_string) = it
@@ -27,11 +29,11 @@ workflow detect_pipeline {
     }
     | combine(outputs, by:0)
     | map {
-        def (flyname, video, flyoutput) = it
+        def (flyname, video, fly_tracking_output) = it
         def video_file = file(video)
         def video_dirname = video_file.parent.name
         def expected_output_name = get_expected_output_name(video, result_suffix)
-        [ flyname, video, "${flyoutput}/${video_dirname}", expected_output_name ]
+        [ flyname, video, "${fly_tracking_output}/${video_dirname}", expected_output_name ]
     }
 
     def detect_process_outputs = DETECT_FEATURES_FROM_VIDEO(

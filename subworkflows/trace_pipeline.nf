@@ -6,7 +6,7 @@ include {
     COMPUTE_TRAJECTORIES;
 } from '../modules/compute_trajectories/main'
 
-workflow trace_pipeline {
+workflow TRACE_PIPELINE {
     take:
     side_front_pairs
     output_dir

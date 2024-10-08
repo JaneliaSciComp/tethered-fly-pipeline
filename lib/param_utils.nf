@@ -17,9 +17,11 @@ def default_params() {
         sideview_crop_size: '230,350',
         sideview_videoname_pattern: 'C001*.avi',
         sideview_detect_result_suffix: '_side',
+        sideview_collectionfile: 'View1Vids.txt'
         frontview_crop_size: '350,350',
         frontview_videoname_pattern: 'C002*.avi',
         frontview_detect_result_suffix: '_front',
+        frontview_collectionfile: 'View2Vids.txt'
         body_axis_lookup_filename: '',
         label_filename: '',
         crop_regression_filename: '',

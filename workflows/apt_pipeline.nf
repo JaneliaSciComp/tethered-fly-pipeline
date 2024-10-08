@@ -3,12 +3,12 @@ include {
 } from '../modules/sample_dirs/main'
 
 include {
-    detect_pipeline as side_view_detect
-    detect_pipeline as front_view_detect
+    DETECT_PIPELINE as DETECT_SIDE_VIEW
+    DETECT_PIPELINE as DETECT_FRONT_VIEW
 } from '../subworkflows/detect_pipeline'
 
 include {
-    trace_pipeline;
+    TRACE_PIPELINE;
 } from '../subworkflows/trace_pipeline'
 
 workflow apt_pipeline {
@@ -33,31 +33,49 @@ workflow apt_pipeline {
     } // [ flyname, fly_input_dir]
 
     def tmp_apt_outputs = temp_tracking_dir
+    | combine(output_dir)
     | combine(apt_inputs.map { it[0] })
-    | map { 
-        [it[1], "${it[0]}/${it[1]}"] 
+    | map {
+        def (tracking_results_dir, final_results_dir, flyname) = it
+        [
+            flyname, 
+            "${tracking_results_dir}/${flyname}",
+            "${final_results_dir}/${flyname}",
+        ] 
     } // [ flyname, fly_temp_tracking_dir]
 
-    def side_view_detect_results = side_view_detect(
+    def sideview_filelist = tmp_apt_outputs
+    | map {
+        def (fly, traking_dir, results_dir) = it
+        "${results_dir}/${params.sideview_collectionfile}"
+    }
+    def detect_side_view_results = DETECT_SIDE_VIEW(
         apt_inputs,
         tmp_apt_outputs,
         'SIDE', // this is a constant for side view
         params.sideview_videoname_pattern,
         params.sideview_crop_size,
+        sideview_filelist,
         params.sideview_detect_result_suffix
     )
 
-    def front_view_detect_results = front_view_detect(
+    def frontview_filelist = tmp_apt_outputs
+    | map {
+        def (fly, traking_dir, results_dir) = it
+        "${results_dir}/${params.frontview_collectionfile}"
+    }
+    def detect_front_view_results = DETECT_FRONT_VIEW(
         apt_inputs,
         tmp_apt_outputs,
         'FRONT', // this is a constant for front view
         params.frontview_videoname_pattern,
         params.frontview_crop_size,
+        frontview_filelist,
         params.frontview_detect_result_suffix
     )
 
-    def paired_detect_results = side_view_detect_results
-    | join(front_view_detect_results, by:[0,1])
+    def paired_detect_results = detect_side_view_results
+    | join(detect_front_view_results, by:[0,1])
     | map {
         def (flyname, video_key,
              side_video, side_detect_result_dir, side_detect_result_name,
@@ -78,7 +96,7 @@ workflow apt_pipeline {
         [it[1], "${it[0]}/${it[1]}"]
     } // [ flyname, fly_output_dir]
 
-    def apt_final_results = trace_pipeline(
+    def apt_final_results = TRACE_PIPELINE(
         paired_detect_results,
         apt_outputs
     )
