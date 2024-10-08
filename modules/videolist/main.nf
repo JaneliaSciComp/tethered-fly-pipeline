@@ -24,7 +24,7 @@ process CREATE_VIDEO_LIST {
     def collection_file = file(collection_filename)
     """
     movies_list=`find "${fly_dirname}" -name "${video_name_pattern}" ${excluded_path} | sort`
-    echo "Create videolist: ${movies_list} -> ${collection_file} "
+    echo "Create videolist: \${movies_list} -> ${collection_file} "
     mkdir -p "${collection_file.parent}"
     IFS=\$'\n' echo "\${movies_list}" > "${collection_file}"
     """
