@@ -21,7 +21,7 @@ process CREATE_VIDEO_LIST {
 
     script:
     def excluded_path = '! -path "*calib*"'
-    def collection_file = file(collection_filename)
+    collection_file = file(collection_filename)
     """
     movies_list=`find "${fly_dirname}" -name "${video_name_pattern}" ${excluded_path} | sort`
     echo "Create videolist: \${movies_list} -> ${collection_file} "
