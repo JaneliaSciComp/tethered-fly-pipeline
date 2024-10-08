@@ -33,21 +33,19 @@ workflow apt_pipeline {
     } // [ flyname, fly_input_dir]
 
     def tmp_apt_outputs = temp_tracking_dir
-    | combine(output_dir)
     | combine(apt_inputs.map { it[0] })
     | map {
-        def (tracking_results_dir, final_results_dir, flyname) = it
+        def (tracking_results_dir, flyname) = it
         [
-            flyname, 
-            "${tracking_results_dir}/${flyname}",
-            "${final_results_dir}/${flyname}",
+            flyname, "${tracking_results_dir}/${flyname}",
         ] 
     } // [ flyname, fly_temp_tracking_dir]
 
-    def sideview_filelist = tmp_apt_outputs
+    def sideview_filelist = output_dir
+    | combine(apt_inputs.map { it[0] })
     | map {
-        def (fly, traking_dir, results_dir) = it
-        "${results_dir}/${params.sideview_collectionfile}"
+        def (results_dir, flyname) = it
+        "${results_dir}/${flyname}/${params.sideview_collectionfile}"
     }
     def detect_side_view_results = DETECT_SIDE_VIEW(
         apt_inputs,
@@ -59,10 +57,11 @@ workflow apt_pipeline {
         params.sideview_detect_result_suffix
     )
 
-    def frontview_filelist = tmp_apt_outputs
+    def frontview_filelist = output_dir
+    | combine(apt_inputs.map { it[0] })
     | map {
-        def (fly, traking_dir, results_dir) = it
-        "${results_dir}/${params.frontview_collectionfile}"
+        def (results_dir, flyname) = it
+        "${results_dir}/${flyname}/${params.frontview_collectionfile}"
     }
     def detect_front_view_results = DETECT_FRONT_VIEW(
         apt_inputs,
