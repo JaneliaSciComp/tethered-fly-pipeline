@@ -13,7 +13,7 @@ workflow DETECT_PIPELINE {
     view_type
     video_name_pattern
     view_crop_size
-    collection_file,
+    collection_file
     result_suffix
 
     main:
