@@ -17,16 +17,15 @@ process CREATE_VIDEO_LIST {
     val(collection_filename)
 
     output:
-    tuple val(fly), env(movies_list)
+    tuple val(fly), val(collection_file), env(movies_list)
 
     script:
     def excluded_path = '! -path "*calib*"'
     def collection_file = file(collection_filename)
     """
     movies_list=`find "${fly_dirname}" -name "${video_name_pattern}" ${excluded_path} | sort`
-    echo "Create videolist: ${collection_file}"
+    echo "Create videolist: ${movies_list} -> ${collection_file} "
     mkdir -p "${collection_file.parent}"
-
     IFS=\$'\n' echo "\${movies_list}" > "${collection_file}"
     """
 }
