@@ -27,7 +27,6 @@ process CREATE_VIDEO_LIST {
     echo "Create videolist: ${collection_file}"
     mkdir -p "${collection_file.parent}"
 
-    echo \${movies_list} > "${collection_file}"
-
+    IFS=\$'\n' echo \${movies_list} > "${collection_file}"
     """
 }
