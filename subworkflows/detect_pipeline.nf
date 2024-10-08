@@ -27,7 +27,7 @@ workflow DETECT_PIPELINE {
         videos_list_string.split('\\s+')
             .collect {
                 def r = [ flyname, it ]
-                log.info "Collect $r"
+                log.debug "Prepare movie file $r"
                 r
             }
     }
