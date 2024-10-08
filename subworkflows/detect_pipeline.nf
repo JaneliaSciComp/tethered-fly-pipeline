@@ -24,7 +24,7 @@ workflow DETECT_PIPELINE {
     )
     | flatMap {
         def (flyname, video_list_file, videos_list_string) = it
-        videos_list_string.split('\s+')
+        videos_list_string.split('\\s+')
             .collect {
                 def r = [ flyname, it ]
                 log.info "Collect $r"
