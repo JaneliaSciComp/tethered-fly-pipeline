@@ -45,8 +45,8 @@ RUN mamba install -c conda-forge \
 # these 2 packages require anaconda channel
 # tensorflow=1.14 is available on conda-forge but the corresponding tensorflow-gpu isn't
 RUN mamba install -c anaconda \
-        tensorflow=1.15 \
-        tensorflow-gpu=1.15 \
+        tensorflow=1.15.4 \
+        tensorflow-gpu=1.15.4 \
         keras=2.2.4 \
         keras-gpu=2.2.4
 

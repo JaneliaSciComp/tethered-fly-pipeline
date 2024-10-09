@@ -49,9 +49,6 @@ process DETECT_FEATURES_FROM_VIDEO {
 
     cd /code/apt/deepnet
 
-    export NVIDIA_TF32_OVERRIDE=0
-    export TF_ENABLE_AUTO_MIXED_PRECISION=1
-
     python detect_features_from_movies.py \
         -movies ${video_filename} \
         -view ${view_type} \
