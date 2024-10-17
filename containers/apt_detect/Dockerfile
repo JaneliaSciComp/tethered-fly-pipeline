@@ -40,14 +40,13 @@ RUN mamba install -c conda-forge \
         pip \
         future \
         easydict=1.9 \
-        numpy=1.21.6
+        numpy=1.21.6 \
+        protobuf=3.20.1
 
 RUN mamba install -c anaconda \
-        tensorflow=1.14 \
-        tensorflow-gpu=1.14
-
-RUN mamba install -c conda-forge \
-        keras=2.2.4
+        keras=2.2.4 \
+        tensorflow=1.15 \
+        tensorflow-gpu=1.15
 
 RUN pip install \
         scikit-image==0.18.3 \
