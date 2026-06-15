@@ -92,8 +92,8 @@
                 }
             },
             "required": [
-                "i",
-                "o",
+                "input_dir",
+                "output_dir",
                 "tmp_tracking_dir",
                 "label_filename",
                 "body_axis_lookup_filename",

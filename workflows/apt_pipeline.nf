@@ -26,7 +26,7 @@ workflow apt_pipeline {
         }
         res
     }
-    | flatMap { it.split('\s+') }
+    | flatMap { it.split('\\s+') }
     | map {
         def fly = file(it).name
         [fly, it]
