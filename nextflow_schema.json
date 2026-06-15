@@ -211,6 +211,15 @@
         },
         {
             "$ref": "#/definitions/detect_parameters"
+        },
+        {
+            "$ref": "#/definitions/track_parameters"
+        },
+        {
+            "$ref": "#/definitions/containers"
+        },
+        {
+            "$ref": "#/definitions/other"
         }
     ]
 }
