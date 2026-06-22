@@ -22,9 +22,9 @@ workflow DETECT_PIPELINE {
         video_name_pattern,
         collection_file,
     )
-    | flatMap { it ->
-        def (flyname, _video_list_file, videos_list_string) = it
-        log.debug "Video list results: $it"
+    | flatMap { row ->
+        def (flyname, _video_list_file, videos_list_string) = row
+        log.debug "Video list results: $row"
         videos_list_string.split('\\s+')
             .collect { vn ->
                 def r = [ flyname, vn ]
@@ -33,9 +33,9 @@ workflow DETECT_PIPELINE {
             }
     }
     | combine(outputs, by:0)
-    | map { it ->
-        def (flyname, video, fly_tracking_output) = it
-        log.debug "Prepare detect process inputs: $it"
+    | map { row ->
+        def (flyname, video, fly_tracking_output) = row
+        log.debug "Prepare detect process inputs: $row"
         def video_file = file(video)
         def video_dirname = video_file.parent.name
         def expected_output_name = get_expected_output_name(video, result_suffix)
@@ -47,15 +47,15 @@ workflow DETECT_PIPELINE {
         view_type,
         view_crop_size
     )
-    | map { it ->
-        def (flyname, video, detect_output, detect_result_name) = it
+    | map { row ->
+        def (flyname, video, detect_output, detect_result_name) = row
         def video_file = file(video)
         def video_name = video_file.name
         [ flyname, get_detect_output_key(video_name), video, detect_output, detect_result_name ]
     }
 
     emit:
-    res = detect_process_outputs
+    detect_process_outputs
 }
 
 

@@ -19,34 +19,35 @@ workflow apt_pipeline {
 
     main:
     def apt_inputs = GET_SAMPLE_DIRS(input_dir)
-    | filter { 
-        def res = it != 'null'
+    | filter { dirs ->
+        def res = dirs != 'null'
         if (!res) {
             log.warn "No fly data directory found! Check the input_dir and/or flydata_maxdepth_search parameters"
         }
         res
     }
-    | flatMap { it.split('\\s+') }
-    | map {
-        def fly = file(it).name
-        [fly, it]
+    | flatMap { dirs -> dirs.split('\\s+') }
+    | map { fly_input_dir ->
+        def fly = file(fly_input_dir).name
+        [fly, fly_input_dir]
     } // [ flyname, fly_input_dir]
 
     def tmp_apt_outputs = temp_tracking_dir
-    | combine(apt_inputs.map { it[0] })
-    | map {
-        def (tracking_results_dir, flyname) = it
+    | combine(apt_inputs.map { row -> row[0] })
+    | map { row ->
+        def (tracking_results_dir, flyname) = row
         [
             flyname, "${tracking_results_dir}/${flyname}",
-        ] 
+        ]
     } // [ flyname, fly_temp_tracking_dir]
 
     def sideview_filelist = output_dir
-    | combine(apt_inputs.map { it[0] })
-    | map {
-        def (results_dir, flyname) = it
-        "${results_dir}/${flyname}/${params.sideview_collectionfile}"
+    | combine(apt_inputs.map { row -> row[0] })
+    | map { row ->
+        def (results_dir, flyname) = row
+        return file("${results_dir}/${flyname}/${params.sideview_collectionfile}")
     }
+
     def detect_side_view_results = DETECT_SIDE_VIEW(
         apt_inputs,
         tmp_apt_outputs,
@@ -58,11 +59,12 @@ workflow apt_pipeline {
     )
 
     def frontview_filelist = output_dir
-    | combine(apt_inputs.map { it[0] })
-    | map {
-        def (results_dir, flyname) = it
-        "${results_dir}/${flyname}/${params.frontview_collectionfile}"
+    | combine(apt_inputs.map { row -> row[0] })
+    | map { row ->
+        def (results_dir, flyname) = row
+        return file("${results_dir}/${flyname}/${params.frontview_collectionfile}")
     }
+
     def detect_front_view_results = DETECT_FRONT_VIEW(
         apt_inputs,
         tmp_apt_outputs,
@@ -75,11 +77,11 @@ workflow apt_pipeline {
 
     def paired_detect_results = detect_side_view_results
     | join(detect_front_view_results, by:[0,1])
-    | map {
-        def (flyname, video_key,
+    | map { row ->
+        def (flyname, _video_key,
              side_video, side_detect_result_dir, side_detect_result_name,
              front_video, front_detect_result_dir, front_detect_result_name
-            ) = it
+            ) = row
         [
             flyname,
             side_video,
@@ -90,9 +92,9 @@ workflow apt_pipeline {
     }
 
     def apt_outputs = output_dir
-    | combine(apt_inputs.map { it[0] })
-    | map {
-        [it[1], "${it[0]}/${it[1]}"]
+    | combine(apt_inputs.map { row -> row[0] })
+    | map { row ->
+        [ row[1], file("${row[0]}/${row[1]}") ]
     } // [ flyname, fly_output_dir]
 
     def apt_final_results = TRACE_PIPELINE(

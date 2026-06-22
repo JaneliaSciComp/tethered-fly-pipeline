@@ -16,27 +16,28 @@ workflow TRACE_PIPELINE {
     def fly_calibrations = GET_TEXT_CONTENT(params.calibrations_filename)
     | flatMap { fn_and_content ->
         def (fn, csv_rows) = fn_and_content
-        if (csv_rows.trim() == "null") {
+        log.debug "Get content from ${fn}"
+        if (csv_rows.trim() == "null" || !csv_rows) {
             return []
         } else {
             return csv_rows.split(/\s+/)
         }
     }
-    | filter { it.trim() != '' }
-    | map { it.split(/[,]/) }
-    | map {
-        def (flynum, calibration_filename) = it
+    | filter { csv_row -> csv_row.trim() != '' }
+    | map { csv_row -> csv_row.split(/[,]/) }
+    | map { fields ->
+        def (flynum, calibration_filename) = fields
         [ "fly${flynum}", calibration_filename ]
     }
 
     def trace_inputs = side_front_pairs
     | combine(fly_calibrations, by: 0)
     | combine(output_dir, by:0)
-    | map {
+    | map { row ->
         def (flyname,
              side_movie_filename, side_features,
              front_movie_filename, front_features,
-             kinemat_file, trace_output_dir) = it
+             kinemat_file, trace_output_dir) = row
         def (three_d_res_folder, three_d_res_filename) = create_trace_filename(side_movie_filename, '_3Dres.mat')
         def (side_trace_folder, side_trace_filename) = create_trace_filename(side_movie_filename, '.trk')
         def (front_trace_folder, front_trace_filename) = create_trace_filename(front_movie_filename, '.trk')
@@ -55,7 +56,7 @@ workflow TRACE_PIPELINE {
     )
 
     emit:
-    res = trace_results
+    trace_results
 }
 
 def create_trace_filename(full_fn, suffix) {

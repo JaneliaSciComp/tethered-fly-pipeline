@@ -1,25 +1,25 @@
 def create_container_options(dirList) {
     def dirs = dirList
-                .findAll {
-                    def (f, levels_up) = it
+                .findAll { entry ->
+                    def (f, _levels_up) = entry
                     f
                 }
-                .collect {
-                    def (f, levels_up) = it
+                .collect { entry ->
+                    def (f, levels_up) = entry
                     get_parent(f, levels_up)
                 }
                 .unique(false)
-    if (workflow.containerEngine == 'singularity') {
+    if (workflow.containerEngine == 'singularity' || workflow.containerEngine == 'apptainer') {
         dirs
-        .findAll { it != null && it != '' }
-        .inject(params.runtime_opts) {
-            arg, item -> "${arg} -B ${item}"
+        .findAll { d -> d != null && d != '' }
+        .inject(params.runtime_opts) { arg, item ->
+            "${arg} -B ${item}"
         }
-    } else if (workflow.containerEngine == 'docker') {
+    } else if (workflow.containerEngine == 'docker' || workflow.containerEngine == 'podman') {
         dirs
-        .findAll { it != null && it != '' }
-        .inject(params.runtime_opts) {
-            arg, item -> "${arg} -v ${item}:${item}"
+        .findAll { d -> d != null && d != '' }
+        .inject(params.runtime_opts) { arg, item ->
+            "${arg} -v ${item}:${item}"
         }
     } else {
         params.runtime_opts
@@ -28,15 +28,12 @@ def create_container_options(dirList) {
 
 def get_parent(f, levels_up) {
     def ff = file(f)
-    def parent = ff
-    def nlevels = levels_up
-    while (nlevels-- > 0) {
-        def p = parent.parent;
-        if (!p)
-            return ff
-        else
-            parent = p
-        
-    }
-    return parent
+    return walk_up(ff, ff, levels_up)
+}
+
+def walk_up(orig, current, remaining) {
+    if (remaining <= 0) return current
+    def p = current.parent
+    if (!p) return orig
+    return walk_up(orig, p, remaining - 1)
 }
