@@ -18,8 +18,8 @@ process CREATE_VIDEO_LIST {
     full_fly_dir=\$(readlink ${fly_dir})
     full_collection_file=\$(readlink -m ${collection_file})
     movies_list=`find "\${full_fly_dir}" -name "${video_name_pattern}" ${excluded_path} | sort`
-    echo "Create videolist: \${movies_list} -> ${collection_file} "
+    echo "Create videolist: \${movies_list} -> \${full_collection_file} "
     mkdir -p "\$(dirname \${full_collection_file})"
-    IFS=\$'\n' echo "\${movies_list}" > "${collection_file}"
+    IFS=\$'\n' echo "\${movies_list}" > "\${full_collection_file}"
     """
 }
