@@ -42,7 +42,7 @@ workflow DETECT_PIPELINE {
         [ flyname, video, "${fly_tracking_output}/${video_dirname}", expected_output_name ]
     }
 
-    detect_process_outputs = DETECT_FEATURES_FROM_VIDEO(
+    def detect_process_outputs = DETECT_FEATURES_FROM_VIDEO(
         detect_process_inputs,
         view_type,
         view_crop_size
@@ -55,7 +55,7 @@ workflow DETECT_PIPELINE {
     }
 
     emit:
-    detect_process_outputs
+    done = detect_process_outputs
 }
 
 

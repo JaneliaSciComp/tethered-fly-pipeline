@@ -56,7 +56,7 @@ workflow TRACE_PIPELINE {
     )
 
     emit:
-    trace_results
+    done = trace_results
 }
 
 def create_trace_filename(full_fn, suffix) {
