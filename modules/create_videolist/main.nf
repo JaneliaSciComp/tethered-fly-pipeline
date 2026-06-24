@@ -1,4 +1,4 @@
-process CREATE_VIDEO_LIST {
+process CREATE_VIDEOLIST {
     label 'low_cpu'
     label 'low_memory'
     label 'use_local'

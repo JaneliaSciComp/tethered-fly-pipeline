@@ -1,6 +1,6 @@
 include {
-    CREATE_VIDEO_LIST;
-} from '../../modules/videolist/main'
+    CREATE_VIDEOLIST;
+} from '../../modules/create_videolist'
 
 include {
     DETECT_FEATURES_FROM_VIDEO;
@@ -19,7 +19,7 @@ workflow DETECT_PIPELINE {
     result_suffix
 
     main:
-    def detect_process_inputs = CREATE_VIDEO_LIST(
+    def detect_process_inputs = CREATE_VIDEOLIST(
         inputs,
         video_name_pattern,
         collection_file,
