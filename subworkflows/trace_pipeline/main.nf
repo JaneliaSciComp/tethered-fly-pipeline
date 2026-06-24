@@ -41,14 +41,16 @@ workflow TRACE_PIPELINE {
         def (three_d_res_folder, three_d_res_filename) = create_trace_filename(side_movie_filename, '_3Dres.mat')
         def (side_trace_folder, side_trace_filename) = create_trace_filename(side_movie_filename, '.trk')
         def (front_trace_folder, front_trace_filename) = create_trace_filename(front_movie_filename, '.trk')
-        [
+        def r = [
             flyname,
             side_features, front_features,
             kinemat_file,
-            "${trace_output_dir}/${three_d_res_folder}/${three_d_res_filename}",
-            "${trace_output_dir}/${side_trace_folder}/${side_trace_filename}",
-            "${trace_output_dir}/${front_trace_folder}/${front_trace_filename}"
+            file("${trace_output_dir}/${three_d_res_folder}/${three_d_res_filename}"),
+            file("${trace_output_dir}/${side_trace_folder}/${side_trace_filename}"),
+            file("${trace_output_dir}/${front_trace_folder}/${front_trace_filename})"
         ]
+        log.debug "Trace inputs: $r"
+        return r
     }
 
     def trace_results = COMPUTE_TRAJECTORIES(
