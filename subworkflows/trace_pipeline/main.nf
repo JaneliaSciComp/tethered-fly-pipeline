@@ -47,7 +47,7 @@ workflow TRACE_PIPELINE {
             kinemat_file,
             file("${trace_output_dir}/${three_d_res_folder}/${three_d_res_filename}"),
             file("${trace_output_dir}/${side_trace_folder}/${side_trace_filename}"),
-            file("${trace_output_dir}/${front_trace_folder}/${front_trace_filename})"
+            file("${trace_output_dir}/${front_trace_folder}/${front_trace_filename}")
         ]
         log.debug "Trace inputs: $r"
         return r
