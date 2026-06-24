@@ -25,6 +25,7 @@ process DETECT_FEATURES_FROM_VIDEO {
     tuple val(flyname), val(video_filename), env('full_output_dir'), val(expected_output_name)
 
     script:
+    def args = task.ext.args ?: ''
     def check_block = ''
     if (!force_detect) {
         check_block = """
@@ -57,17 +58,22 @@ process DETECT_FEATURES_FROM_VIDEO {
 
     cd /code/apt/deepnet
 
-    python detect_features_from_movies.py \
-        -movies \${full_video_filepath} \
-        -view ${view_type} \
-        ${force_detect_flag} \
-        -bodylabelfilename \${full_body_axis_lookup_filepath} \
-        -lbl_file \${full_label_filepath} \
-        -crop_reg_file \${full_crop_regression_filepath} \
-        -view_crop_size "${view_crop_size}" \
-        -cache_dir "\${full_model_cache_dirpath}" \
-        ${scratch_dir_arg} \
-        -n "${model_name}" \
+    CMD=(
+        python detect_features_from_movies.py
+        -movies \${full_video_filepath}
+        -view ${view_type}
+        ${force_detect_flag}
+        -bodylabelfilename \${full_body_axis_lookup_filepath}
+        -lbl_file \${full_label_filepath}
+        -crop_reg_file \${full_crop_regression_filepath}
+        -view_crop_size "${view_crop_size}"
+        -cache_dir "\${full_model_cache_dirpath}"
+        ${scratch_dir_arg}
+        -n "${model_name}"
         -o "\${full_output_dir}"
+        ${args}
+    )
+    echo "CMD: \${CMD[@]}"
+    (exec "\${CMD[@]}")
     """    
 }
