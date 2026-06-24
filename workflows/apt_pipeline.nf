@@ -1,6 +1,10 @@
 include {
     GET_SAMPLE_DIRS;
-} from '../modules/sample_dirs/main'
+} from '../modules/sample_dirs'
+
+include {
+    EXTRACT_BODY_AXIS_DATA_DIRS;
+} from '../modules/body_axis_data_dirs'
 
 include {
     DETECT_PIPELINE as DETECT_SIDE_VIEW;
@@ -51,14 +55,30 @@ workflow apt_pipeline {
         return file("${results_dir}/${flyname}/${params.sideview_collectionfile}")
     }
 
-    def detect_aux_files = [
-        file(params.model_cache_dirname),
-        params.model_name,
-        file(params.body_axis_lookup_filename),
-        file(params.label_filename),
-        file(params.crop_regression_filename),
-        params.scratch_dir ? file(params.scratch_dir) : [],
-    ]
+    // Extract the distinct directories holding the per-fly body data .lbl files
+    // referenced in the body axis lookup file, so they can be mounted into the
+    // detect container. This runs as a process because the lookup file may only
+    // be accessible from the compute node.
+    def body_axis_data_dirs = EXTRACT_BODY_AXIS_DATA_DIRS(file(params.body_axis_lookup_filename))
+    | map { dirs_string ->
+        dirs_string.trim()
+            ? dirs_string.trim().split('\\s+').collect { d -> file(d) }
+            : []
+    }
+
+    def detect_aux_files = body_axis_data_dirs
+    | map { data_dirs ->
+        [
+            file(params.model_cache_dirname),
+            params.model_name,
+            file(params.body_axis_lookup_filename),
+            file(params.label_filename),
+            file(params.crop_regression_filename),
+            params.scratch_dir ? file(params.scratch_dir) : [],
+            data_dirs,
+        ]
+    }
+    | first() // reuse the same value across both detect pipelines
 
     def detect_side_view_results = DETECT_SIDE_VIEW(
         apt_inputs,

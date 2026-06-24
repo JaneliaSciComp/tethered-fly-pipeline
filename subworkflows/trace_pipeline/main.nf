@@ -52,7 +52,8 @@ workflow TRACE_PIPELINE {
     }
 
     def trace_results = COMPUTE_TRAJECTORIES(
-        trace_inputs
+        trace_inputs,
+        params.scratch_dir ? file(params.scratch_dir) : []
     )
 
     emit:

@@ -16,7 +16,8 @@ process DETECT_FEATURES_FROM_VIDEO {
           path(body_axis_lookup_file),
           path(label_file),
           path(crop_regression_file),
-          path(scratch_dir)
+          path(scratch_dir),
+          path(data_dirs)
     val(view_type)
     val(view_crop_size)
     val(force_detect)

@@ -122,14 +122,14 @@
                     "fa_icon": "fas fa-crop-alt"
                 },
                 "apt_detect_cpus": {
-                    "type": "string",
+                    "type": ["string", "integer"],
                     "fa_icon": "fas fa-microchip",
                     "description": "Number of CPU cores for detection. Default: 2"
                 },
                 "apt_detect_memory": {
-                    "type": "string",
+                    "type": ["string", "integer"],
                     "fa_icon": "fas fa-memory",
-                    "description": "Amount of memory for detection. Default: 30 G"
+                    "description": "Amount of memory for detection in GB. Default: 30"
                 }
             },
             "fa_icon": "fas fa-bullseye"
@@ -140,14 +140,14 @@
             "description": "Parameters for the tracking step",
             "properties": {
                 "apt_track_cpus": {
-                    "type": "string",
+                    "type": ["string", "integer"],
                     "fa_icon": "fas fa-microchip",
                     "description": "Number of CPU cores for tracking. Default: 3"
                 },
                 "apt_track_memory": {
-                    "type": "string",
+                    "type": ["string", "integer"],
                     "fa_icon": "fas fa-memory",
-                    "description": "Amount of memory for tracking. Default: 45 G"
+                    "description": "Amount of memory for tracking in GB. Default: 45"
                 }
             },
             "fa_icon": "fas fa-bullseye"
