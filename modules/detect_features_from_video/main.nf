@@ -22,7 +22,7 @@ process DETECT_FEATURES_FROM_VIDEO {
     val(force_detect)
 
     output:
-    tuple val(flyname), val(video_filename), val(output_dirname), val(expected_output_name)
+    tuple val(flyname), val(video_filename), env('full_output_dir'), val(expected_output_name)
 
     script:
     def check_block = ''
@@ -40,11 +40,14 @@ process DETECT_FEATURES_FROM_VIDEO {
         ? "-tmp_outdir ${scratch_dir}"
         : ''
     """
-    ${check_block}
     umask 0002
 
-    mkdir -p "${output_dirname}"
-    echo "Created output dir: ${output_dirname}"
+    full_output_dir=\$(readlink -m ${output_dirname})
+
+    ${check_block}
+
+    mkdir -p "\${full_output_dir}"
+    echo "Created output dir: \${full_output_dir}"
 
     cd /code/apt/deepnet
 
@@ -59,6 +62,6 @@ process DETECT_FEATURES_FROM_VIDEO {
         -cache_dir "${model_cache_dir}" \
         ${scratch_dir_arg} \
         -n "${model_name}" \
-        -o "${output_dirname}"
+        -o "\${full_output_dir}"
     """    
 }
