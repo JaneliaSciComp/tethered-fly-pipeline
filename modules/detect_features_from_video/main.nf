@@ -37,7 +37,7 @@ process DETECT_FEATURES_FROM_VIDEO {
 
     def force_detect_flag = force_detect ? '-r' : ''
     def scratch_dir_arg = scratch_dir 
-        ? "-tmp_outdir ${scratch_dir}"
+        ? "-tmp_outdir \$(readlink ${scratch_dir})"
         : ''
     """
     umask 0002
@@ -49,17 +49,23 @@ process DETECT_FEATURES_FROM_VIDEO {
     mkdir -p "\${full_output_dir}"
     echo "Created output dir: \${full_output_dir}"
 
+    full_video_filepath=\$(readlink ${video_filename})
+    full_body_axis_lookup_filepath=\$(readlink ${body_axis_lookup_file})
+    full_label_file = \$(readlink ${label_file})
+    full_crop_regression_file = \$(readlink ${crop_regression_file})
+    full_model_cache_dir = \$(readlink ${model_cache_dir})
+
     cd /code/apt/deepnet
 
     python detect_features_from_movies.py \
-        -movies ${video_filename} \
+        -movies \${full_video_filepath} \
         -view ${view_type} \
         ${force_detect_flag} \
-        -bodylabelfilename ${body_axis_lookup_file} \
-        -lbl_file ${label_file} \
-        -crop_reg_file ${crop_regression_file} \
+        -bodylabelfilename \${full_body_axis_lookup_filepath} \
+        -lbl_file \${full_label_filepath} \
+        -crop_reg_file \${full_crop_regression_filepath} \
         -view_crop_size "${view_crop_size}" \
-        -cache_dir "${model_cache_dir}" \
+        -cache_dir "\${full_model_cache_dirpath}" \
         ${scratch_dir_arg} \
         -n "${model_name}" \
         -o "\${full_output_dir}"
