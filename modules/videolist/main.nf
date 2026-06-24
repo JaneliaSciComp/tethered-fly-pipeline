@@ -2,7 +2,7 @@ process CREATE_VIDEO_LIST {
     label 'low_cpu'
     label 'low_memory'
     label 'use_local'
-    container { params.apt_detect_container }
+    container 'public.ecr.aws/janeliascicomp/huston/apt_detect:1.1.0'
 
     input:
     tuple val(fly), path(fly_dir)

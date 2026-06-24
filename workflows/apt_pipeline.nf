@@ -3,8 +3,8 @@ include {
 } from '../modules/sample_dirs/main'
 
 include {
-    DETECT_PIPELINE as DETECT_SIDE_VIEW
-    DETECT_PIPELINE as DETECT_FRONT_VIEW
+    DETECT_PIPELINE as DETECT_SIDE_VIEW;
+    DETECT_PIPELINE as DETECT_FRONT_VIEW;
 } from '../subworkflows/detect_pipeline'
 
 include {
@@ -27,9 +27,12 @@ workflow apt_pipeline {
         res
     }
     | flatMap { dirs -> dirs.split('\\s+') }
-    | map { fly_input_dir ->
-        def fly = file(fly_input_dir).name
-        [fly, fly_input_dir]
+    | map { fly_input_dirname ->
+        def fly_input_dir = file(fly_input_dirname)
+        def flyname = fly_input_dir.name
+        def r = [ flyname, fly_input_dir ]
+        log.debug "APT input: $r"
+        return r
     } // [ flyname, fly_input_dir]
 
     def tmp_apt_outputs = temp_tracking_dir
@@ -48,12 +51,23 @@ workflow apt_pipeline {
         return file("${results_dir}/${flyname}/${params.sideview_collectionfile}")
     }
 
+    def detect_aux_files = [
+        file(params.model_cache_dirname),
+        params.model_name,
+        file(params.body_axis_lookup_filename),
+        file(params.label_filename),
+        file(params.crop_regression_filename),
+        params.scratch_dir ? file(params.scratch_dir) : [],
+    ]
+
     def detect_side_view_results = DETECT_SIDE_VIEW(
         apt_inputs,
         tmp_apt_outputs,
+        detect_aux_files,
         'SIDE', // this is a constant for side view
         params.sideview_videoname_pattern,
         params.sideview_crop_size,
+        params.force_detect,
         sideview_filelist,
         params.sideview_detect_result_suffix
     )
@@ -68,9 +82,11 @@ workflow apt_pipeline {
     def detect_front_view_results = DETECT_FRONT_VIEW(
         apt_inputs,
         tmp_apt_outputs,
+        detect_aux_files,
         'FRONT', // this is a constant for front view
         params.frontview_videoname_pattern,
         params.frontview_crop_size,
+        params.force_detect,
         frontview_filelist,
         params.frontview_detect_result_suffix
     )

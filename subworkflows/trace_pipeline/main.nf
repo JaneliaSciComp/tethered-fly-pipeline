@@ -1,10 +1,10 @@
 include {
     GET_TEXT_CONTENT;
-} from '../modules/get_text_content/main'
+} from '../../modules/get_text_content'
 
 include {
     COMPUTE_TRAJECTORIES;
-} from '../modules/compute_trajectories/main'
+} from '../../modules/compute_trajectories'
 
 workflow TRACE_PIPELINE {
     take:

@@ -1,18 +1,20 @@
 include {
     CREATE_VIDEO_LIST;
-} from '../modules/videolist/main'
+} from '../../modules/videolist/main'
 
 include {
     DETECT_FEATURES_FROM_VIDEO;
-} from '../modules/detect_features_from_video/main'
+} from '../../modules/detect_features_from_video/main'
 
 workflow DETECT_PIPELINE {
     take:
-    inputs
+    inputs // [fly, fly_input_dir]
     outputs
+    detect_aux_files
     view_type
     video_name_pattern
     view_crop_size
+    force_detect
     collection_file
     result_suffix
 
@@ -44,8 +46,10 @@ workflow DETECT_PIPELINE {
 
     def detect_process_outputs = DETECT_FEATURES_FROM_VIDEO(
         detect_process_inputs,
+        detect_aux_files,
         view_type,
-        view_crop_size
+        view_crop_size,
+        force_detect
     )
     | map { row ->
         def (flyname, video, detect_output, detect_result_name) = row

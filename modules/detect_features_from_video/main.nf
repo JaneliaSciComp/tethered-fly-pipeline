@@ -4,30 +4,29 @@ include {
 
 process DETECT_FEATURES_FROM_VIDEO {
     label 'withGPU'
-    container { params.apt_detect_container }
-    containerOptions { create_container_options([
-        [video_filename, 1],
-        [output_dirname, 3],
-        [params.model_cache_dirname, 0],
-        [params.scratch_dir, 0],
-        [params.body_axis_lookup_filename, 1],
-        [params.label_filename, 1],
-        [params.crop_regression_filename, 1],
-    ]) }
-    cpus { params.apt_detect_cpus }
-    memory { params.apt_detect_memory }
+    container 'public.ecr.aws/janeliascicomp/huston/apt_detect:1.1.0'
 
     input:
-    tuple val(flyname), val(video_filename), val(output_dirname), val(expected_output_name)
+    tuple val(flyname),
+          path(video_filename),
+          path(output_dirname),
+          val(expected_output_name)
+    tuple path(model_cache_dir),
+          val(model_name),
+          path(body_axis_lookup_file),
+          path(label_file),
+          path(crop_regression_file),
+          path(scratch_dir)
     val(view_type)
     val(view_crop_size)
+    val(force_detect)
 
     output:
     tuple val(flyname), val(video_filename), val(output_dirname), val(expected_output_name)
 
     script:
     def check_block = ''
-    if (!params.force_detect) {
+    if (!force_detect) {
         check_block = """
         if [[ -f "${output_dirname}/${expected_output_name}" ]]; then
             echo "Feature detect result ${output_dirname}/${expected_output_name} already exists"
@@ -36,9 +35,9 @@ process DETECT_FEATURES_FROM_VIDEO {
         """
     }
 
-    def force_detect_flag = params.force_detect ? '-r' : ''
-    def scratch_dir_arg = params.scratch_dir 
-        ? "-tmp_outdir ${params.scratch_dir}"
+    def force_detect_flag = force_detect ? '-r' : ''
+    def scratch_dir_arg = scratch_dir 
+        ? "-tmp_outdir ${scratch_dir}"
         : ''
     """
     ${check_block}
@@ -53,13 +52,13 @@ process DETECT_FEATURES_FROM_VIDEO {
         -movies ${video_filename} \
         -view ${view_type} \
         ${force_detect_flag} \
-        -bodylabelfilename ${params.body_axis_lookup_filename} \
-        -lbl_file ${params.label_filename} \
-        -crop_reg_file ${params.crop_regression_filename} \
+        -bodylabelfilename ${body_axis_lookup_file} \
+        -lbl_file ${label_file} \
+        -crop_reg_file ${crop_regression_file} \
         -view_crop_size "${view_crop_size}" \
-        -cache_dir "${params.model_cache_dirname}" \
+        -cache_dir "${model_cache_dir}" \
         ${scratch_dir_arg} \
-        -n "${params.model_name}" \
+        -n "${model_name}" \
         -o "${output_dirname}"
     """    
 }
