@@ -1,7 +1,3 @@
-include {
-    create_container_options;
-} from '../../lib/container_utils'
-
 process DETECT_FEATURES_FROM_VIDEO {
     label 'withGPU'
     container 'public.ecr.aws/janeliascicomp/huston/apt_detect:1.1.0'

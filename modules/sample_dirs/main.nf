@@ -1,7 +1,3 @@
-include {
-    create_container_options;
-} from '../../lib/container_utils'
-
 process GET_SAMPLE_DIRS {
     label 'low_cpu'
     label 'low_memory'
