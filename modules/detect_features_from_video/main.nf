@@ -28,7 +28,7 @@ process DETECT_FEATURES_FROM_VIDEO {
         check_block = """
         if [[ -f "${output_dirname}/${expected_output_name}" ]]; then
             echo "Feature detect result ${output_dirname}/${expected_output_name} already exists"
-            exit 0
+            SKIP_DETECT=1
         fi
         """
     }
@@ -49,27 +49,29 @@ process DETECT_FEATURES_FROM_VIDEO {
 
     ${check_block}
 
-    mkdir -p "\${full_output_dir}"
-    echo "Created output dir: \${full_output_dir}"
+    if [[ ! -v SKIP_DETECT ]]; then
+        mkdir -p "\${full_output_dir}"
+        echo "Created output dir: \${full_output_dir}"
 
-    cd /code/apt/deepnet
+        cd /code/apt/deepnet
 
-    CMD=(
-        python detect_features_from_movies.py
-        -movies \${full_video_filepath}
-        -view ${view_type}
-        ${force_detect_flag}
-        -bodylabelfilename \${full_body_axis_lookup_filepath}
-        -lbl_file \${full_label_filepath}
-        -crop_reg_file \${full_crop_regression_filepath}
-        -view_crop_size "${view_crop_size}"
-        -cache_dir "\${full_model_cache_dirpath}"
-        ${scratch_dir_arg}
-        -n "${model_name}"
-        -o "\${full_output_dir}"
-        ${args}
-    )
-    echo "CMD: \${CMD[@]}"
-    (exec "\${CMD[@]}")
+        CMD=(
+            python detect_features_from_movies.py
+            -movies \${full_video_filepath}
+            -view ${view_type}
+            ${force_detect_flag}
+            -bodylabelfilename \${full_body_axis_lookup_filepath}
+            -lbl_file \${full_label_filepath}
+            -crop_reg_file \${full_crop_regression_filepath}
+            -view_crop_size "${view_crop_size}"
+            -cache_dir "\${full_model_cache_dirpath}"
+            ${scratch_dir_arg}
+            -n "${model_name}"
+            -o "\${full_output_dir}"
+            ${args}
+        )
+        echo "CMD: \${CMD[@]}"
+        (exec "\${CMD[@]}")
+    fi
     """    
 }
