@@ -36,6 +36,7 @@ process COMPUTE_TRAJECTORIES {
         // their final locations.
         run_block = """
         full_scratch_dir=\$(readlink -m ${scratch_dir})
+        echo "Use scratch dir: \${full_scratch_dir}"
         mkdir -p "\${full_scratch_dir}"
         mkdir -p "\$(dirname \${full_three_d_res})"
         mkdir -p "\$(dirname \${full_side_trk})"

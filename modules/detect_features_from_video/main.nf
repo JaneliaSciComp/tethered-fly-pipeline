@@ -19,7 +19,7 @@ process DETECT_FEATURES_FROM_VIDEO {
     val(force_detect)
 
     output:
-    tuple val(flyname), val(video_filename), env('full_output_dir'), val(expected_output_name)
+    tuple val(flyname), env('full_video_filepath'), env('full_output_dir'), val(expected_output_name)
 
     script:
     def args = task.ext.args ?: ''
@@ -41,17 +41,16 @@ process DETECT_FEATURES_FROM_VIDEO {
     umask 0002
 
     full_output_dir=\$(readlink -m ${output_dirname})
-
-    ${check_block}
-
-    mkdir -p "\${full_output_dir}"
-    echo "Created output dir: \${full_output_dir}"
-
     full_video_filepath=\$(readlink ${video_filename})
     full_body_axis_lookup_filepath=\$(readlink ${body_axis_lookup_file})
     full_label_filepath=\$(readlink ${label_file})
     full_crop_regression_filepath=\$(readlink ${crop_regression_file})
     full_model_cache_dirpath=\$(readlink ${model_cache_dir})
+
+    ${check_block}
+
+    mkdir -p "\${full_output_dir}"
+    echo "Created output dir: \${full_output_dir}"
 
     cd /code/apt/deepnet
 

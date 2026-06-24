@@ -43,16 +43,20 @@ workflow apt_pipeline {
     | combine(apt_inputs.map { row -> row[0] })
     | map { row ->
         def (tracking_results_dir, flyname) = row
-        [
+        def r = [
             flyname, "${tracking_results_dir}/${flyname}",
         ]
+        log.debug "Temporary APT output: $r"
+        return r
     } // [ flyname, fly_temp_tracking_dir]
 
     def sideview_filelist = output_dir
     | combine(apt_inputs.map { row -> row[0] })
     | map { row ->
         def (results_dir, flyname) = row
-        return file("${results_dir}/${flyname}/${params.sideview_collectionfile}")
+        def svf = file("${results_dir}/${flyname}/${params.sideview_collectionfile}")
+        log.debug "Sideview file: $svf"
+        return svf
     }
 
     // Extract the distinct directories holding the per-fly body data .lbl files
@@ -77,8 +81,7 @@ workflow apt_pipeline {
             params.scratch_dir ? file(params.scratch_dir) : [],
             data_dirs,
         ]
-    } // considering that this was generated from a value channel and it generated a single output
-      // this is a value channel which can be safely passed to other modules
+    } // considering that this was generated from a value channel and it generated a single output this is a value channel which can be safely passed to other modules
 
     def detect_side_view_results = DETECT_SIDE_VIEW(
         apt_inputs,
@@ -92,11 +95,16 @@ workflow apt_pipeline {
         params.sideview_detect_result_suffix
     )
 
+    detect_side_view_results.view { r -> log.debug "Side view result: $r"}
+
     def frontview_filelist = output_dir
     | combine(apt_inputs.map { row -> row[0] })
     | map { row ->
         def (results_dir, flyname) = row
-        return file("${results_dir}/${flyname}/${params.frontview_collectionfile}")
+        def fvf = file("${results_dir}/${flyname}/${params.frontview_collectionfile}")
+        log.debug "Frontview file: $fvf"
+        return fvf
+
     }
 
     def detect_front_view_results = DETECT_FRONT_VIEW(
@@ -111,6 +119,8 @@ workflow apt_pipeline {
         params.frontview_detect_result_suffix
     )
 
+    detect_front_view_results.view { r -> log.debug "Side view result: $r"}
+
     def paired_detect_results = detect_side_view_results
     | join(detect_front_view_results, by:[0,1])
     | map { row ->
@@ -118,13 +128,15 @@ workflow apt_pipeline {
              side_video, side_detect_result_dir, side_detect_result_name,
              front_video, front_detect_result_dir, front_detect_result_name
             ) = row
-        [
+        def r = [
             flyname,
             side_video,
             "${side_detect_result_dir}/${side_detect_result_name}",
             front_video,
             "${front_detect_result_dir}/${front_detect_result_name}"
         ]
+        log.debug "Detect result: $r"
+        return r
     }
 
     def apt_outputs = output_dir

@@ -49,7 +49,7 @@ workflow TRACE_PIPELINE {
             file("${trace_output_dir}/${side_trace_folder}/${side_trace_filename}"),
             file("${trace_output_dir}/${front_trace_folder}/${front_trace_filename}")
         ]
-        log.debug "Trace inputs: $r"
+        log.debug "Trace inputs: $row -> $r"
         return r
     }
 
@@ -66,5 +66,7 @@ def create_trace_filename(full_fn, suffix) {
     def f = file(full_fn)
     def folder = f.parent.name
     def name = f.name.split(/[.]/)[0]
-    return [ folder, "${name}${suffix}" ]
+    def r = [ folder, "${name}${suffix}" ]
+    log.debug "Create trace file [${full_fn}, ${suffix}] -> $r"
+    return r
 }
