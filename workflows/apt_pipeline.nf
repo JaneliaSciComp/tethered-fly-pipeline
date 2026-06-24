@@ -77,8 +77,8 @@ workflow apt_pipeline {
             params.scratch_dir ? file(params.scratch_dir) : [],
             data_dirs,
         ]
-    }
-    | first() // reuse the same value across both detect pipelines
+    } // considering that this was generated from a value channel and it generated a single output
+      // this is a value channel which can be safely passed to other modules
 
     def detect_side_view_results = DETECT_SIDE_VIEW(
         apt_inputs,
