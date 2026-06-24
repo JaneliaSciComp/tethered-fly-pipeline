@@ -52,9 +52,9 @@ process DETECT_FEATURES_FROM_VIDEO {
 
     full_video_filepath=\$(readlink ${video_filename})
     full_body_axis_lookup_filepath=\$(readlink ${body_axis_lookup_file})
-    full_label_file = \$(readlink ${label_file})
-    full_crop_regression_file = \$(readlink ${crop_regression_file})
-    full_model_cache_dir = \$(readlink ${model_cache_dir})
+    full_label_file=\$(readlink ${label_file})
+    full_crop_regression_file=\$(readlink ${crop_regression_file})
+    full_model_cache_dir=\$(readlink ${model_cache_dir})
 
     cd /code/apt/deepnet
 
