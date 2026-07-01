@@ -1,8 +1,9 @@
 {
     "input_dir": "/nrs/scicompsoft/goinac/huston/data",
-    "output_dir": "/nrs/scicompsoft/goinac/huston/results",
-    "tmp_tracking_dir": "/nrs/scicompsoft/goinac/huston/tmp_tracking",
+    "output_dir": "/nrs/scicompsoft/goinac/huston/apt_results",
+    "tmp_tracking_dir": "/nrs/scicompsoft/goinac/huston/apt_tmp_tracking",
     "flydata_dirname_pattern": "fly4315",
+    "flydata_maxdepth_search": 2,
     "sideview_videoname_pattern": "C001*002_c.avi",
     "frontview_videoname_pattern": "C002*002_c.avi",
     "body_axis_lookup_filename":  "/nrs/scicompsoft/goinac/huston/data/flp-chrimson_experiments/fly2BodyAxis_lookupTable_Ben.csv",
@@ -11,6 +12,5 @@
     "model_cache_dirname":  "/nrs/scicompsoft/goinac/huston/data/models/apt_cache",
     "model_name":  "stephen_20200124",
     "calibrations_filename":  "/nrs/scicompsoft/goinac/huston/data/flp-chrimson_experiments/fly2DLT_lookupTableStephen.csv",
-    "runtime_opts": "-B /nrs/scicompsoft/goinac -B /groups/branson/bransonlab -B /groups/huston/hustonlab -B /data",
     "lsf_opts": "-P scicompsoft"
 }

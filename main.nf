@@ -1,35 +1,36 @@
 #!/usr/bin/env nextflow
 
-nextflow.enable.dsl=2
-
-include {
-    default_params;
-    input_dir_param;
-    output_dir_param;
-    scratch_dir_param;
-    temp_tracking_dir_param;
-} from './lib/param_utils'
-
-main_params = default_params() + params
-process_params = main_params +
-    [
-        input_dir: input_dir_param(main_params),
-        output_dir: output_dir_param(main_params),
-        temp_tracking_dir: temp_tracking_dir_param(main_params),
-        scratch_dir: scratch_dir_param(main_params),
-    ]
-
 include {
     apt_pipeline;
-} from './workflows/apt_pipeline' addParams(process_params)
-
-
-input_dir = Channel.of(process_params.input_dir) // flies parent dir
-output_dir = Channel.of(process_params.output_dir)
-temp_tracking_dir = Channel.of(process_params.temp_tracking_dir)
+} from './workflows/apt_pipeline'
 
 workflow {
-    res = apt_pipeline(input_dir, output_dir, temp_tracking_dir)
+    def input_dir         = channel.of(input_dir_param(params))
+    def output_dir        = channel.of(output_dir_param(params))
+    def temp_tracking_dir = channel.of(temp_tracking_dir_param(params))
 
-    res | view
+    apt_pipeline(input_dir, output_dir, temp_tracking_dir) | view
+}
+
+def input_dir_param(Map ps) {
+    def input_dir = ps.input_dir
+    if (!input_dir) {
+        input_dir = ps.i
+    }
+    def dir = file(input_dir)
+    return "${dir}"
+}
+
+def output_dir_param(Map ps) {
+    def output_dir = ps.output_dir
+    if (!output_dir) {
+        output_dir = ps.o
+    }
+    def dir = file(output_dir)
+    return "${dir}"
+}
+
+def temp_tracking_dir_param(Map ps) {
+    def dir = file(ps.tmp_tracking_dir)
+    return "${dir}"
 }

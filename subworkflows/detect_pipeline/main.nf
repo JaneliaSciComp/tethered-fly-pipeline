@@ -1,30 +1,32 @@
 include {
-    CREATE_VIDEO_LIST;
-} from '../modules/videolist/main'
+    CREATE_VIDEOLIST;
+} from '../../modules/create_videolist'
 
 include {
     DETECT_FEATURES_FROM_VIDEO;
-} from '../modules/detect_features_from_video/main'
+} from '../../modules/detect_features_from_video/main'
 
 workflow DETECT_PIPELINE {
     take:
-    inputs
+    inputs // [fly, fly_input_dir]
     outputs
+    detect_aux_files
     view_type
     video_name_pattern
     view_crop_size
+    force_detect
     collection_file
     result_suffix
 
     main:
-    def detect_process_inputs = CREATE_VIDEO_LIST(
+    def detect_process_inputs = CREATE_VIDEOLIST(
         inputs,
         video_name_pattern,
         collection_file,
     )
-    | flatMap { it ->
-        def (flyname, _video_list_file, videos_list_string) = it
-        log.debug "Video list results: $it"
+    | flatMap { row ->
+        def (flyname, _video_list_file, videos_list_string) = row
+        log.debug "Video list results: $row"
         videos_list_string.split('\\s+')
             .collect { vn ->
                 def r = [ flyname, vn ]
@@ -33,9 +35,9 @@ workflow DETECT_PIPELINE {
             }
     }
     | combine(outputs, by:0)
-    | map { it ->
-        def (flyname, video, fly_tracking_output) = it
-        log.debug "Prepare detect process inputs: $it"
+    | map { row ->
+        def (flyname, video, fly_tracking_output) = row
+        log.debug "Prepare detect process inputs: $row"
         def video_file = file(video)
         def video_dirname = video_file.parent.name
         def expected_output_name = get_expected_output_name(video, result_suffix)
@@ -44,18 +46,20 @@ workflow DETECT_PIPELINE {
 
     def detect_process_outputs = DETECT_FEATURES_FROM_VIDEO(
         detect_process_inputs,
+        detect_aux_files,
         view_type,
-        view_crop_size
+        view_crop_size,
+        force_detect
     )
-    | map { it ->
-        def (flyname, video, detect_output, detect_result_name) = it
+    | map { row ->
+        def (flyname, video, detect_output, detect_result_name) = row
         def video_file = file(video)
         def video_name = video_file.name
         [ flyname, get_detect_output_key(video_name), video, detect_output, detect_result_name ]
     }
 
     emit:
-    res = detect_process_outputs
+    done = detect_process_outputs
 }
 
 

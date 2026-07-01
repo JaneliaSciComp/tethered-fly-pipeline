@@ -42,8 +42,8 @@ Parameters for the tracking step
 
 | Parameter | Description | Type |
 |-----------|-----------|-----------|
-| `apt_track_cpus` | Number of CPU cores for tracking. Default: 3 | `string` |
-| `apt_track_memory` | Amount of memory for tracking. Default: 45 G | `string` |
+| `apt_track_cpus` | Number of CPU cores for tracking. Default: 3 | `int` |
+| `apt_track_memory` | Amount of memory for tracking. Default: 45 G | `int` |
 
 ## Container Options
 

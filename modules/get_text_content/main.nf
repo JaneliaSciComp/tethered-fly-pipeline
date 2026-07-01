@@ -1,18 +1,11 @@
-include {
-    create_container_options;
-} from '../../lib/container_utils'
-
 process GET_TEXT_CONTENT {
     label 'low_cpu'
     label 'low_memory'
     label 'use_local'
-    container { params.apt_detect_container }
-    containerOptions { create_container_options([
-        [f, 1],
-    ]) }
+    container 'public.ecr.aws/janeliascicomp/huston/apt_detect:1.1.0'
 
     input:
-    val(f)
+    path(f)
 
     output:
     tuple val(f), stdout

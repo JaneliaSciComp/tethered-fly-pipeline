@@ -10,4 +10,5 @@
 work
 .nextflow*
 # local files
+.claude
 mylocal

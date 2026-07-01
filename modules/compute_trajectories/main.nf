@@ -1,109 +1,104 @@
-include {
-    create_container_options;
-} from '../../lib/container_utils'
-
 process COMPUTE_TRAJECTORIES {
-    container { params.apt_track_container }
-    containerOptions { create_container_options([
-        [side_features_filename, 1],
-        [front_features_filename, 1],
-        [kinemat_filename, 1],
-        // the location of the result files is:
-        // <output_folder>/<flyfolder-fly123>/<movie folder-C001H001S0002>/<movie name>_3dres.mat
-        // so we mount the parent of the output folder
-        [three_d_res_filename, 4],
-        [side_trk_filename, 4],
-        [front_trk_filename, 4],
-        [params.scratch_dir, 0],
-    ]) }
-    cpus { params.apt_track_cpus }
-    memory { params.apt_track_memory }
-    errorStrategy { params.error_strategy }
+    container 'public.ecr.aws/janeliascicomp/huston/apt_track:1.0.0'
 
     input:
     tuple val(flyname),
-          val(side_features_filename),
-          val(front_features_filename),
-          val(kinemat_filename),
-          val(three_d_res_filename),
-          val(side_trk_filename),
-          val(front_trk_filename)
+          path(side_features_filename),
+          path(front_features_filename),
+          path(kinemat_filename),
+          path(three_d_res_filename),
+          path(side_trk_filename),
+          path(front_trk_filename)
+    path(scratch_dir)
 
     output:
     tuple val(flyname),
-          val(three_d_res_filename),
-          val(side_trk_filename),
-          val(front_trk_filename)
+          env('full_three_d_res'),
+          env('full_side_trk'),
+          env('full_front_trk')
 
     script:
-    def three_d_res_file = file(three_d_res_filename)
-    def side_trk_file = file(side_trk_filename)
-    def front_trk_file = file(front_trk_filename)
-    def three_d_res_dir = three_d_res_file.parent
-    def side_trk_dir = side_trk_file.parent
-    def front_trk_dir = front_trk_file.parent
-    def three_d_res_name = three_d_res_file.name
-    def side_trk_name = side_trk_file.name
-    def front_trk_name = front_trk_file.name
+    // Resolve every staged input back to its real (full) path. The result files
+    // are outputs that may not exist yet, hence readlink -m which resolves a path
+    // even when its final component is missing.
+    def resolve_block = """
+    full_side_features=\$(readlink -m ${side_features_filename})
+    full_front_features=\$(readlink -m ${front_features_filename})
+    full_kinemat=\$(readlink -m ${kinemat_filename})
+    full_three_d_res=\$(readlink -m ${three_d_res_filename})
+    full_side_trk=\$(readlink -m ${side_trk_filename})
+    full_front_trk=\$(readlink -m ${front_trk_filename})
+    """
 
-    def check_block = ''
-    if (!params.force_track) {
-        check_block = """
-        if [[ -f "${front_trk_filename}" && -f "${side_trk_filename}" ]]; then
-            echo "Trace files ${front_trk_filename} and ${side_trk_filename} already exist"
-            exit 0
-        fi
-        """
-    }
-    def three_d_res_output
-    def side_trk_output
-    def front_trk_output
-    def mk_output_dirs    
-    def mv_result_block
-    if (params.scratch_dir) {
-        three_d_res_output = "${params.scratch_dir}/${three_d_res_name}"
-        side_trk_output = "${params.scratch_dir}/${side_trk_name}"
-        front_trk_output = "${params.scratch_dir}/${front_trk_name}"
+    def run_block
+    if (scratch_dir) {
+        // Write the results to the scratch directory first, then move them to
+        // their final locations.
+        run_block = """
+        full_scratch_dir=\$(readlink -m ${scratch_dir})
+        echo "Use scratch dir: \${full_scratch_dir}"
+        mkdir -p "\${full_scratch_dir}"
+        mkdir -p "\$(dirname \${full_three_d_res})"
+        mkdir -p "\$(dirname \${full_side_trk})"
+        mkdir -p "\$(dirname \${full_front_trk})"
 
-        mk_output_dirs = """
-        mkdir -p ${params.scratch_dir}
-        mkdir -p "${three_d_res_dir}"
-        mkdir -p "${side_trk_dir}"
-        mkdir -p "${front_trk_dir}"
-        """
+        scratch_three_d_res="\${full_scratch_dir}/${three_d_res_filename}"
+        scratch_side_trk="\${full_scratch_dir}/${side_trk_filename}"
+        scratch_front_trk="\${full_scratch_dir}/${front_trk_filename}"
 
-        mv_result_block = """
-        mv ${three_d_res_output} ${three_d_res_filename}
-        mv ${side_trk_output} ${side_trk_filename}
-        mv ${front_trk_output} ${front_trk_filename}
+        CMD=(
+            /app/entrypoint.sh
+            "\${scratch_three_d_res}"
+            "\${full_front_features}"
+            "\${full_side_features}"
+            "\${full_kinemat}"
+            "\${scratch_front_trk}"
+            "\${scratch_side_trk}"
+        )
+        echo "CMD: \${CMD[@]}"
+        (exec "\${CMD[@]}")
+
+        mv "\${scratch_three_d_res}" "\${full_three_d_res}"
+        mv "\${scratch_side_trk}" "\${full_side_trk}"
+        mv "\${scratch_front_trk}" "\${full_front_trk}"
         """
     } else {
-        three_d_res_output = three_d_res_filename
-        side_trk_output = side_trk_filename
-        front_trk_output = front_trk_filename
+        run_block = """
+        mkdir -p "\$(dirname \${full_three_d_res})"
+        mkdir -p "\$(dirname \${full_side_trk})"
+        mkdir -p "\$(dirname \${full_front_trk})"
 
-        mk_output_dirs = """
-        mkdir -p "${three_d_res_dir}"
-        mkdir -p "${side_trk_dir}"
-        mkdir -p "${front_trk_dir}"
+        CMD=(
+            /app/entrypoint.sh
+            "\${full_three_d_res}"
+            "\${full_front_features}"
+            "\${full_side_features}"
+            "\${full_kinemat}"
+            "\${full_front_trk}"
+            "\${full_side_trk}"
+        )
+        echo "CMD: \${CMD[@]}"
+        (exec "\${CMD[@]}")
+        """
+    }
+
+    // Skip the computation when the trace results already exist (unless forced).
+    // Avoid an early `exit 0` so the output env vars are always captured.
+    def compute_block = params.force_track
+        ? run_block
+        : """
+        if [[ -f "\${full_front_trk}" && -f "\${full_side_trk}" ]]; then
+            echo "Trace files \${full_front_trk} and \${full_side_trk} already exist"
+        else
+        ${run_block}
+        fi
         """
 
-        mv_result_block = ''
-    }
     """
-    ${check_block}
     umask 0002
 
-    ${mk_output_dirs}
+    ${resolve_block}
 
-    /app/entrypoint.sh \
-    "${three_d_res_output}" \
-    "${front_features_filename}" \
-    "${side_features_filename}" \
-    "${kinemat_filename}" \
-    "${front_trk_output}" \
-    "${side_trk_output}"
-
-    ${mv_result_block}
-    """    
+    ${compute_block}
+    """
 }
